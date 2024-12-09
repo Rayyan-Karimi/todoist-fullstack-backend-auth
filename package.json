@@ -1,0 +1,36 @@
+{
+  "name": "rayyan-todolist-expressjs-sqlite",
+  "version": "1.0.0",
+  "description": "A backend for the todolist project/",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon root/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rayyan-Karimi/Rayyan-Todoist.git"
+  },
+  "keywords": [
+    "todoist",
+    "expressjs",
+    "sqlite",
+    "react"
+  ],
+  "author": "rayyan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rayyan-Karimi/Rayyan-Todoist/issues"
+  },
+  "homepage": "https://github.com/Rayyan-Karimi/Rayyan-Todoist#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

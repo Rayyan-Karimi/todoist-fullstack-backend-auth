@@ -1,4 +1,4 @@
-import db from '../db/dbConfig.js'
+import {db} from '../db/dbConfig.js'
 
 class Task {
     constructor(id, content, description, due_date, is_completed, created_at, project_id) {

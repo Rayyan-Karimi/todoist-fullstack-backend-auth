@@ -24,10 +24,10 @@ export const read = (request, response) => {
     const taskId = request.params.id;
     Task.findAll(taskId, (err, responseData) => {
         if (err) {
-            console.err("Some error occurred while reading the Task(s)", err.message)
+            console.error("Some error occurred while reading the Task(s)", err.message)
             response.status(500).send({ message: err.message || "Some error occurred while reading the Task(s)" })
         } else if (!responseData || responseData.length === 0) {
-            console.err(taskId ? `No task found with the given ID ${taskId}` : "No tasks found.", err.message)
+            console.error(taskId ? `No task found with the given ID ${taskId}` : "No tasks found.")
             response.status(404).send({ message: taskId ? `No task found with the given ID ${taskId}` : "No tasks found.", });
         } else {
             console.log(responseData)

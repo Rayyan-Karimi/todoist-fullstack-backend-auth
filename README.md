@@ -26,3 +26,6 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 `"start": "nodemon root/server.js"`
 - Now in terminal, do
 `npm start`
+
+### 5. add node_modules in gitignore
+`touch .gitignore && echo "node_modules/" >> .gitignore && git rm -r --cached node_modules ; git status`

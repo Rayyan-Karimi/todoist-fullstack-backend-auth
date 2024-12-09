@@ -31,7 +31,7 @@ class Task {
     static findAll(taskId, response) {
         let query = "Select * from tasks"
         if (taskId) query += ` Where id = ${taskId}`
-        db.run(query, (err, rows) => {
+        db.all(query, (err, rows) => {
             if (err) {
                 const errorMessage = taskId ? `Error retrieving task with ID ${taskId}` : "Error retrieving all tasks";
                 console.error(errorMessage, err.message);
@@ -69,7 +69,7 @@ class Task {
     static remove(taskId, response) {
         let query = "DELETE FROM tasks";
         if (taskId) query += ` WHERE id = ${taskId}`;
-        db.run(query, params, function (err) {
+        db.run(query, function (err) {
             if (err) {
                 console.error(`Error deleting task(s):`, err.message);
                 response(err, null);
@@ -84,3 +84,5 @@ class Task {
         });
     }
 }
+
+export default Task;

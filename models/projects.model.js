@@ -10,7 +10,7 @@ class Project {
 
     static create(newProject, response) {
         const query = `
-        insert into projects (name, color, is_favorite
+        insert into projects (name, color, is_favorite)
         values(?, ?, ?)
         `
         const params = [newProject.name, newProject.color, newProject.is_favorite]
@@ -27,14 +27,18 @@ class Project {
 
     static findAll(projectId, response) {
         const query = "Select * from projects"
-        if (projectId) query += `where id = ${projectId}`
-        db.get(query, (err, row) => {
+        if (projectId) query += ` where id = ${projectId}`
+        db.all(query, (err, rows) => {
             if (err) {
-                console.error("Error fetching the Project with project id =", projectId, err.message)
+                const errorMessage = projectId ? `Error retrieving project with ID ${projectId}...`
+                    : "Error retrieving all projects...";
+                console.error(errorMessage, err.message)
                 response(err, null);
             } else {
-                console.log("Retrieved project with id=", projectId, row)
-                response(null, row)
+                const successMessage = projectId ? `Project with ID ${projectId} retrieved successfully!`
+                    : "All projects retrieved successfully!";
+                console.error(successMessage)
+                response(null, rows);
             }
         })
     }
@@ -62,27 +66,19 @@ class Project {
 
     static remove(projectId, response) {
         const query = "Delete from projects"
-        if (projectId) query += `where id = ${projectId}`
+        if (projectId) query += ` where id = ${projectId}`
         db.run(query, function (err) {
-            if (projectId) {
-                if (err) {
-                    console.error(`Error deleting project with ID ${projectId}:`, err.message);
-                    response(err, null);
-                } else if (this.changes === 0) {
-                    console.log(`Delete request- No project found with ID ${projectId}:`, err.message);
-                    response({ message: "Delete request- No project found with the given ID." }, null);
-                } else {
-                    console.log(`Deleted project with ID ${projectId}`);
-                    response(null, { message: `Project with ID ${projectId} deleted successfully!` });
-                }
+            if (err) {
+                console.error(`Error deleting project(s):`, err.message);
+                response(err, null);
+            } else if (projectId && this.changes === 0) {
+                console.log(`Delete request- No project found with ID ${projectId}:`, err.message);
+                response({ message: "Delete request- No project found with the given ID." }, null);
             } else {
-                if (err) {
-                    console.error("Error deleting all projects:", err.message);
-                    response(err, null);
-                } else {
-                    console.log("Deleted all projects.");
-                    response(null, { message: "All projects deleted successfully!" });
-                }
+                const message = projectId ? `Project with ID ${projectId} deleted successfully!`
+                    : "All projects deleted successfully!";
+                response(null, { message: message });
+                console.log(message);
             }
         })
     }

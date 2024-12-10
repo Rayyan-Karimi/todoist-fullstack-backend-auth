@@ -31,7 +31,7 @@ export const createTables = () => {
     is_completed integer default 0,
     project_id integer not null,
     created_at text default current_timestamp,
-    foreign key (project_id) references projects(id)) ON DELETE CASCADE
+    foreign key (project_id) references projects(id) ON DELETE CASCADE)
     `
 
     db.run(projectsTable, (err) => {

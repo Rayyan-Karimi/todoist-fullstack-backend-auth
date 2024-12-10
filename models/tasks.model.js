@@ -1,14 +1,13 @@
-import {db} from '../db/dbConfig.js'
+import { db } from '../db/dbConfig.js';
 
 class Task {
-    constructor(id, content, description, due_date, is_completed, created_at, project_id) {
-        this.id = id;
+    constructor(content, description, due_date, is_completed, project_id,created_at) {
         this.content = content;
         this.description = description;
         this.due_date = due_date;
+        this.project_id = project_id;
         this.is_completed = is_completed;
         this.created_at = created_at;
-        this.project_id = project_id;
     }
 
     static create(newTask, response) {

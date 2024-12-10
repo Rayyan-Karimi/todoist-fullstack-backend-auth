@@ -1,8 +1,7 @@
-import { db } from '../db/dbConfig.js'
+import { db } from '../db/dbConfig.js';
 
 class Project {
-    constructor(id, name, color, is_favorite) {
-        this.id = id;
+    constructor(name, color, is_favorite) {
         this.name = name;
         this.color = color;
         this.is_favorite = is_favorite;
@@ -26,7 +25,7 @@ class Project {
     }
 
     static findAll(projectId, response) {
-        const query = "Select * from projects"
+        let query = "Select * from projects"
         if (projectId) query += ` where id = ${projectId}`
         db.all(query, (err, rows) => {
             if (err) {
@@ -58,25 +57,24 @@ class Project {
                 console.log("No project found with id=", projectId)
                 response({ message: `No project found with id=${projectId}` }, null)
             } else {
-                console.log("Updated project with id=", projectId, ...updatedProject)
-                response(null, { id: this.lastID, ...updatedProject })
+                console.log("Updated project with id=", projectId, updatedProject)
+                response(null, { id: projectId, ...updatedProject })
             }
         })
     }
 
     static remove(projectId, response) {
-        const query = "Delete from projects"
+        let query = "Delete from projects"
         if (projectId) query += ` where id = ${projectId}`
         db.run(query, function (err) {
             if (err) {
                 console.error(`Error deleting project(s):`, err.message);
                 response(err, null);
             } else if (projectId && this.changes === 0) {
-                console.log(`Delete request- No project found with ID ${projectId}:`, err.message);
-                response({ message: "Delete request- No project found with the given ID." }, null);
+                console.log(`Delete request- No project found with ID ${projectId}`);
+                response({ message: `Delete request- No project found with the given ID - ${projectId}` }, null);
             } else {
-                const message = projectId ? `Project with ID ${projectId} deleted successfully!`
-                    : "All projects deleted successfully!";
+                const message = projectId? `Deleted project ID with ID = ${projectId}`: "All projects deleted successfully!";
                 response(null, { message: message });
                 console.log(message);
             }

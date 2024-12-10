@@ -1,5 +1,5 @@
-import sqlite3 from 'sqlite3'
-import path from 'path'
+import path from 'path';
+import sqlite3 from 'sqlite3';
 const dbPath = path.resolve("./testdb.db");
 const sqlite3Verbose = sqlite3.verbose();
 
@@ -29,9 +29,9 @@ export const createTables = () => {
     description text not null, 
     due_date text not null,
     is_completed integer default 0,
-    created_at text default current_timestamp,
     project_id integer not null,
-    foreign key (project_id) references projects(id))
+    created_at text default current_timestamp,
+    foreign key (project_id) references projects(id)) ON DELETE CASCADE
     `
 
     db.run(projectsTable, (err) => {

@@ -1,17 +1,17 @@
-import Task from '../models/tasks.model.js'
+import Task from '../models/tasks.model.js';
 
 export const createTask = (request, response) => {
     if (!request.body) {
         console.error("Request cannot be empty")
         return response.status(400).send({ message: "Request cannot be empty" })
     }
-    const task = new Task({
-        content: request.body.content,
-        description: request.body.description,
-        due_date: request.body.due_date,
-        is_completed: request.body.is_completed || false,
-        project_id: request.body.project_id
-    })
+    const task = new Task(
+        request.body.content,
+        request.body.description,
+        request.body.due_date,
+        request.body.is_completed || 0,
+        request.body.project_id,
+    )
     Task.create(task, (err, responseData) => {
         if (err) {
             return response.status(500).send({ message: err.message || "Some error occurred while creating the Task." })
@@ -41,13 +41,13 @@ export const updateTask = (request, response) => {
         console.error("Request cannot be empty")
         return response.status(400).send({ message: "Request cannot be empty" })
     }
-    const updatedTask = new Task({
-        content: request.body.content,
-        description: request.body.description,
-        due_date: request.body.due_date,
-        is_completed: request.body.is_completed,
-        project_id: request.body.project_id
-    })
+    const updatedTask = new Task(
+        request.body.content,
+        request.body.description,
+        request.body.due_date,
+        request.body.is_completed,
+        request.body.project_id
+    )
     const taskId = request.params.id;
     Task.update(taskId, updatedTask, (err, responseData) => {
         if (err) {

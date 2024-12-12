@@ -37,18 +37,35 @@ export const updateProject = (request, response) => {
         console.error("Request cannot be empty")
         return response.status(400).send({ message: "Request cannot be empty" })
     }
-    const updatedProject = new Project(
-        request.body.name,
-        request.body.color,
-        request.body.is_favorite || 0
-    )
     const projectId = request.params.id;
-    Project.update(projectId, updatedProject, (err, responseData) => {
-        if (err) {
-            return response.status(500).send({ message: err.message || "Some error occurred while update of project." })
-        }
-        response.send(responseData)
-    })
+    const newIsFavorite = request.body.is_favorite;
+    const newName = request.body.name, newColor = request.body.color;
+    console.log("projectId", projectId, "&& !newName", newName, "&& !newColor", newColor, "&& newIsFavorite", newIsFavorite)
+    if(projectId && newName && newColor && newIsFavorite) {
+        const updatedProject = new Project(
+            newName,
+            newColor,
+            newIsFavorite || 0
+        )
+        Project.update(projectId, updatedProject, (err, responseData) => {
+            if (err) {
+                return response.status(500).send({ message: err.message || "Some error occurred while update of project." })
+            }
+            response.send(responseData)
+        })
+    } else if(projectId && (newIsFavorite === 0 || newIsFavorite === 1)) {
+        console.log("Updating the project favorite status.", projectId)
+        console.log("New is_favorite status is:", newIsFavorite)
+        Project.updateFavorite(projectId, newIsFavorite, (err, responseData) => {
+            if (err) {
+                return response.status(500).send({ message: err.message || "Some error occurred while update of project." })
+            }
+            response.send(responseData)
+        })
+    } else {
+        return response.status(500).send({ message: "Request body is not well defined - Some error occurred while update." })
+    }
+    
 };
 
 export const deleteProject = (request, response) => {

@@ -63,6 +63,27 @@ class Project {
         })
     }
 
+    static updateFavorite(projectId, newIsFavorite, response) {
+        const query = `
+        Update projects
+        set is_favorite = ?
+        where id = ?
+        `
+        const params = [newIsFavorite, projectId]
+        db.run(query, params, function (err) {
+            if (err) {
+                console.error("Error updating the Project with project id =", projectId, err.message)
+                response(err, null);
+            } else if (this.changes === 0) {
+                console.log("No project found with id=", projectId)
+                response({ message: `No project found with id=${projectId}` }, null)
+            } else {
+                console.log("Updated project with id=", projectId)
+                response(null, { id: projectId })
+            }
+        })
+    }
+
     static remove(projectId, response) {
         let query = "Delete from projects"
         if (projectId) query += ` where id = ${projectId}`

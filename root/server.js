@@ -1,7 +1,8 @@
 import cors from 'cors'
-import express from 'express'
 import dotenv from 'dotenv'
+import express from 'express'
 import { createTables } from '../db/dbConfig.js'
+import CommentRoutes from '../routes/comments.routes.js'
 import ProjectRoutes from '../routes/projects.routes.js'
 import TaskRoutes from '../routes/tasks.routes.js'
 
@@ -24,6 +25,7 @@ createTables();
 // Add routes
 ProjectRoutes(server)
 TaskRoutes(server)
+CommentRoutes(server)
 
 const PORT = process.env.PORT || 8080
 server.listen(PORT, () => {

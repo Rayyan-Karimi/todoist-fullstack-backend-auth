@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-export default function generateTodos(num, maxProjects) {
+export default function generateTasks(num, maxProjects) {
     const todos = [];
     for (let i = 1; i <= num; i++) {
         todos.push({

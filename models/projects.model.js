@@ -36,7 +36,7 @@ class Project {
                 response(err, null);
             } else {
                 const successMessage = projectId ? `Project with ID ${projectId} retrieved successfully!`
-                    : (rows === 0? "No projects in database" :"All projects retrieved successfully!");
+                    : (rows === 0 ? "No projects in database" : "All projects retrieved successfully!");
                 console.error(successMessage)
                 response(null, rows);
             }
@@ -49,7 +49,7 @@ class Project {
         set name = ?, color= ?, is_favorite = ?, user_id = ?
         where id = ?
         `
-        const params = [updatedProject.name, updatedProject.color, updatedProject.isFavorite,updatedProject.userId, projectId]
+        const params = [updatedProject.name, updatedProject.color, updatedProject.isFavorite, updatedProject.userId, projectId]
         db.run(query, params, function (err) {
             if (err) {
                 console.error("Error updating the Project with project id =", projectId, err.message)
@@ -96,9 +96,56 @@ class Project {
                 console.log(`Delete request- No project found with ID ${projectId}`);
                 response({ message: `Delete request- No project found with the given ID - ${projectId}` }, null);
             } else {
-                const message = projectId? `Deleted project ID with ID = ${projectId}`: "All projects deleted successfully!";
+                const message = projectId ? `Deleted project ID with ID = ${projectId}` : "All projects deleted successfully!";
                 response(null, { message: message });
                 console.log(message);
+            }
+        })
+    }
+
+    static filter(filterOptions, response) {
+        let query = "Select * from tasks";
+        let params = [];
+        let conditions = [];
+        
+    }
+
+    static filter(filterOptions, response) {
+        let query = "Select * from tasks"
+        let params = []
+        let conditions = []
+
+        if (filterOptions.projectId) {
+            conditions.push("project_id = ?")
+            params.push(filterOptions.projectId)
+        }
+
+        if (filterOptions.dueDate) {
+            conditions.push("due_date = ?")
+            params.push(filterOptions.dueDate)
+        }
+
+        if (filterOptions.isCompleted) {
+            conditions.push("is_completed = ?")
+            params.push(filterOptions.isCompleted)
+        }
+
+        if (filterOptions.createdAt) {
+            conditions.push("created_at = ?")
+            params.push(filterOptions.createdAt)
+        }
+
+        if (conditions.length) {
+            query += " where " + conditions.join(" and ")
+        }
+
+        db.all(query, params, (err, rows) => {
+            if (err) {
+                console.error("Error filtering tasks", err.message)
+                response(err, null);
+            } else {
+                console.log("Tasks filtered successfully")
+                response(null, rows);
             }
         })
     }

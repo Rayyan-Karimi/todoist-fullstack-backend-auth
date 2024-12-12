@@ -1,3 +1,4 @@
+import e from 'express';
 import Task from '../models/tasks.model.js';
 
 export const createTask = (request, response) => {
@@ -69,6 +70,44 @@ export const deleteTask = (request, response) => {
             response.status(404).send({ message: taskId ? `Task with ID ${taskId} not found.` : "No tasks found to delete.", })
         } else {
             response.send(responseData)
+        }
+    })
+};
+
+export const filterTasks = (request, response) => {
+    const projectId = request.params.project_id;
+    const dueDate = request.params.due_date;
+    const isCompleted = request.params.is_completed;
+    const createdAt = request.params.created_at;
+    const filterRequirements = {
+        projectId: projectId,
+        dueDate: dueDate,
+        isCompleted: isCompleted,
+        createdAt: createdAt
+    };
+    Task.filter(filterRequirements, (err, responseData) => {
+        if (err) {
+            return response.status(500).send({
+                message: err.message || "Some error occurred while filtering of Tasks."
+            })
+        } else if (!responseData) {
+            return response.status(404).send({
+                message: `No tasks found with the given filter requirements`
+            })
+        } else {
+            response.send(responseData)
+        }
+    });
+};
+
+export const filterProject2 = (request, response) => {
+    Task.filter(filterOptions, (err, responseData) => {
+        if (err) {
+            response.status(500).send({ message: err.message || "Some error occurred while filtering the project(s)" })
+        } else if (responseData.length) {
+            response.send(responseData)
+        } else {
+            response.send({ message: "No projects found with the given filter options." })
         }
     })
 };

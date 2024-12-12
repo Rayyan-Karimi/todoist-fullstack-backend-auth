@@ -1,3 +1,4 @@
+
 import Comment from '../models/comments.model.js';
 
 export const createComment = (request, response) => {
@@ -7,7 +8,9 @@ export const createComment = (request, response) => {
     }
     const comment = new Comment(
         request.body.content,
-        request.body.task_id,
+        request.body.user_id,
+        request.body.project_id,
+        request.body.task_id
     )
     Comment.create(comment, (err, responseData) => {
         if (err) {

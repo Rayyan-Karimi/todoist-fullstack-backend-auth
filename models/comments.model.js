@@ -1,19 +1,19 @@
 import { db } from '../db/dbConfig.js';
 
 class Comment {
-    constructor(content, projectId, taskId, userId) {
+    constructor(content, userId, projectId, taskId) {
         this.content = content;
+        this.userId = userId;
         this.projectId = projectId;
         this.taskId = taskId;
-        this.userId = userId;
     }
 
     static create(newComment, response) {
         const query = `
-        insert into comments (content, project_id, task_id, user_id)
+        insert into comments (content, user_id, project_id, task_id)
         values(?, ?, ?, ?)
         `
-        const params = [newComment.content, newComment.projectId, newComment.taskId, newComment.userId]
+        const params = [newComment.content, newComment.userId, newComment.projectId, newComment.taskId]
         db.run(query, params, function (err) {
             if (err) {
                 console.error("Error creating new Comment", err.message)

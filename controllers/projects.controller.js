@@ -8,7 +8,8 @@ export const createProject = (request, response) => {
     const project = new Project(
         request.body.name,
         request.body.color,
-        request.body.is_favorite || 0
+        request.body.is_favorite || 0,
+        request.body.user_id
     )
 
     Project.create(project, (err, responseData) => {
@@ -39,13 +40,14 @@ export const updateProject = (request, response) => {
     }
     const projectId = request.params.id;
     const newIsFavorite = request.body.is_favorite;
-    const newName = request.body.name, newColor = request.body.color;
+    const newName = request.body.name, newColor = request.body.color, newUser = request.body.user_id;
     console.log("projectId", projectId, "&& !newName", newName, "&& !newColor", newColor, "&& newIsFavorite", newIsFavorite)
-    if(projectId && newName && newColor && newIsFavorite) {
+    if(projectId && newName && newColor && newUser && newIsFavorite) {
         const updatedProject = new Project(
             newName,
             newColor,
-            newIsFavorite || 0
+            newIsFavorite || 0,
+            newUser
         )
         Project.update(projectId, updatedProject, (err, responseData) => {
             if (err) {

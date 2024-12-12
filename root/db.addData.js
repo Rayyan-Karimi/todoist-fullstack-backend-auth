@@ -45,16 +45,16 @@ const insertTasks = async (numberOfTasks, maxProjects) => {
 
 let projectsTime = 0
 // Insert projects into DB
-const insertProjects = async (numberOfProjects) => {
+const insertProjects = async (numberOfProjects, maxUsers) => {
     console.log("Inserting projects...")
     const start = performance.now();
     for (let i = 0; i < numberOfProjects; i += BATCH_SIZE) {
-        const batch = generateProjects(Math.min(BATCH_SIZE, numberOfProjects - i)); // don’t generate more records than needed in the last batch.
+        const batch = generateProjects(Math.min(BATCH_SIZE, numberOfProjects - i), maxUsers); // don’t generate more records than needed in the last batch.
         const data = batch.map(project => [
-            project.name, project.color, project.is_favorite
+            project.name, project.color, project.is_favorite, project.user_id
         ]);
         try {
-            await insertBatch('projects', ['name', 'color', 'is_favorite'], data);
+            await insertBatch('projects', ['name', 'color', 'is_favorite', 'user_id'], data);
             console.log(`Inserted ${i + BATCH_SIZE} projects...`)
         } catch (err) {
             console.error(`Error inserting projects: ${err}`)
@@ -66,11 +66,12 @@ const insertProjects = async (numberOfProjects) => {
 
 // Main function to generate and insert data
 const main = async () => {
-    const numberOfProjects = 1000 // 1000000
-    const numberOfTasks = 10000 // 10000000
+    const numberOfProjects = 100 // 1000000
+    const numberOfTasks = 1000 // 10000000
+    const numberOfUsers = 10;
 
     try {
-        await insertProjects(numberOfProjects)
+        await insertProjects(numberOfProjects, numberOfUsers)
         await insertTasks(numberOfTasks, numberOfProjects)
         console.log(`Projects insertion time: ${projectsTime} seconds`);
         console.log(`Tasks insertion time: ${tasksTime} seconds`);

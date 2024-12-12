@@ -27,7 +27,7 @@ export const createTables = () => {
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        password TEXT
+        password TEXT not null
     )
     `;
 
@@ -67,8 +67,7 @@ export const createTables = () => {
         FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         CHECK (
-            (project_id IS NULL AND task_id IS NOT NULL) OR 
-            (project_id IS NOT NULL AND task_id IS NULL)
+            (project_id IS NULL AND task_id IS NOT NULL) OR (project_id IS NOT NULL AND task_id IS NULL)
         )
     )
     `;

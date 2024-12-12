@@ -5,6 +5,7 @@ import { createTables } from '../db/dbConfig.js'
 import CommentRoutes from '../routes/comments.routes.js'
 import ProjectRoutes from '../routes/projects.routes.js'
 import TaskRoutes from '../routes/tasks.routes.js'
+import UsersRoutes from '../routes/users.routes.js'
 
 const server = express()
 var corsRequestOptions = {
@@ -26,6 +27,7 @@ createTables();
 ProjectRoutes(server)
 TaskRoutes(server)
 CommentRoutes(server)
+UsersRoutes(server)
 
 const PORT = process.env.PORT || 8080
 server.listen(PORT, () => {

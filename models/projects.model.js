@@ -8,145 +8,66 @@ class Project {
         this.userId = userId;
     }
 
-    static create(newProject, response) {
-        const query = `
-        insert into projects (name, color, is_favorite, user_id)
-        values(?, ?, ?, ?)
-        `
-        const params = [newProject.name, newProject.color, newProject.isFavorite, newProject.userId]
-        db.run(query, params, function (err) {
-            if (err) {
-                console.error("Error creating new Project", err.message)
-                response(err, null);
-            } else {
-                console.log("Created new project", { id: this.lastID, ...newProject })
-                response(null, { id: this.lastID, ...newProject })
-            }
+    static create(newProject) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                insert into projects (name, color, is_favorite, user_id)
+                values(?, ?, ?, ?)
+            `
+            const params = [newProject.name, newProject.color, newProject.isFavorite, newProject.userId]
+            db.run(query, params, function (err) {
+                if (err) reject(err);
+                else resolve({ id: this.lastID, ...newProject })
+            })
         })
     }
 
     static findAll(projectId, response) {
-        let query = "Select * from projects"
-        if (projectId) query += ` where id = ${projectId}`
-        db.all(query, (err, rows) => {
-            if (err) {
-                const errorMessage = projectId ? `Error retrieving project with ID ${projectId}...`
-                    : "Error retrieving all projects...";
-                console.error(errorMessage, err.message)
-                response(err, null);
-            } else {
-                const successMessage = projectId ? `Project with ID ${projectId} retrieved successfully!`
-                    : (rows === 0 ? "No projects in database" : "All projects retrieved successfully!");
-                console.error(successMessage)
-                response(null, rows);
-            }
+        return new Promise((resolve, reject) => {
+            let query = "Select * from projects"
+            if (projectId) query += ` where id = ${projectId}`
+            db.all(query, (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            })
         })
     }
 
-    static update(projectId, updatedProject, response) {
-        const query = `
-        Update projects
-        set name = ?, color= ?, is_favorite = ?, user_id = ?
-        where id = ?
-        `
-        const params = [updatedProject.name, updatedProject.color, updatedProject.isFavorite, updatedProject.userId, projectId]
-        db.run(query, params, function (err) {
-            if (err) {
-                console.error("Error updating the Project with project id =", projectId, err.message)
-                response(err, null);
-            } else if (this.changes === 0) {
-                console.log("No project found with id=", projectId)
-                response({ message: `No project found with id=${projectId}` }, null)
-            } else {
-                console.log("Updated project with id=", projectId, updatedProject)
-                response(null, { id: projectId, ...updatedProject })
-            }
+    static update(projectId, updatedProject) {
+        return new Promise((resolve, reject) => {
+            const query = `update projects set name = ?, color=?, is_favorite=?, user_id=? where id = ?`
+            const params = [updatedProject.name, updatedProject.color, updatedProject.isFavorite, updatedProject.userId, projectId]
+            db.run(query, params, function (err) {
+                if (err) reject(err);
+                else resolve({ id: this.lastID, ...updatedProject })
+            })
         })
     }
 
     static updateFavorite(projectId, newIsFavorite, response) {
-        const query = `
-        Update projects
-        set is_favorite = ?
-        where id = ?
-        `
-        const params = [newIsFavorite, projectId]
-        db.run(query, params, function (err) {
-            if (err) {
-                console.error("Error updating the Project with project id =", projectId, err.message)
-                response(err, null);
-            } else if (this.changes === 0) {
-                console.log("No project found with id=", projectId)
-                response({ message: `No project found with id=${projectId}` }, null)
-            } else {
-                console.log("Updated project with id=", projectId)
-                response(null, { id: projectId })
-            }
+        return new Promise((resolve, reject) => {
+            const query = `update projects set is_favorite = ? where id = ?`
+            const params = [newIsFavorite, projectId]
+            db.run(query, params, function (err) {
+                if (err) reject(err);
+                else resolve({ id: this.lastID, isFavorite: newIsFavorite })
+            })
         })
     }
 
-    static remove(projectId, response) {
-        let query = "Delete from projects"
-        if (projectId) query += ` where id = ${projectId}`
-        db.run(query, function (err) {
-            if (err) {
-                console.error(`Error deleting project(s):`, err.message);
-                response(err, null);
-            } else if (projectId && this.changes === 0) {
-                console.log(`Delete request- No project found with ID ${projectId}`);
-                response({ message: `Delete request- No project found with the given ID - ${projectId}` }, null);
-            } else {
-                const message = projectId ? `Deleted project ID with ID = ${projectId}` : "All projects deleted successfully!";
-                response(null, { message: message });
-                console.log(message);
-            }
-        })
-    }
-
-    static filter(filterOptions, response) {
-        let query = "Select * from tasks";
-        let params = [];
-        let conditions = [];
-        
-    }
-
-    static filter(filterOptions, response) {
-        let query = "Select * from tasks"
-        let params = []
-        let conditions = []
-
-        if (filterOptions.projectId) {
-            conditions.push("project_id = ?")
-            params.push(filterOptions.projectId)
-        }
-
-        if (filterOptions.dueDate) {
-            conditions.push("due_date = ?")
-            params.push(filterOptions.dueDate)
-        }
-
-        if (filterOptions.isCompleted) {
-            conditions.push("is_completed = ?")
-            params.push(filterOptions.isCompleted)
-        }
-
-        if (filterOptions.createdAt) {
-            conditions.push("created_at = ?")
-            params.push(filterOptions.createdAt)
-        }
-
-        if (conditions.length) {
-            query += " where " + conditions.join(" and ")
-        }
-
-        db.all(query, params, (err, rows) => {
-            if (err) {
-                console.error("Error filtering tasks", err.message)
-                response(err, null);
-            } else {
-                console.log("Tasks filtered successfully")
-                response(null, rows);
-            }
+    static remove(projectId) {
+        return new Promise((resolve, reject) => {
+            let query = "Delete from projects"
+            if (projectId) query += ` where id = ${projectId}`
+            db.run(query, function (err) {
+                if (err) reject(err);
+                else if (projectId && this.changes === 0) {
+                    resolve({ message: `Delete request- No project found with the given ID - ${projectId}` });
+                } else {
+                    const successMessage = projectId ? `Deleted project ID with ID = ${projectId}` : "All projects deleted successfully!";
+                    resolve({ successMessage: successMessage });
+                }
+            })
         })
     }
 }

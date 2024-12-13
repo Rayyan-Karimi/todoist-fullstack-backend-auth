@@ -15,7 +15,7 @@ export const createTask = async (request, response) => {
             request.body.project_id,
         )
         const responseData = await Task.create(task);
-        response.send({message: "Creation success.", addition: responseData})
+        response.send({ message: "Creation success.", addition: responseData })
     } catch (err) {
         return response.status(500).send({ message: err.message || "Some error occurred while creating the Task." })
     }
@@ -31,17 +31,17 @@ export const read = async (request, response) => {
             response.status(200).send(responseData);
         }
     } catch (err) {
-        response.status(500).send({ message: err.message || "Some error occurred while reading the data"});
+        response.status(500).send({ message: err.message || "Some error occurred while reading the data" });
     }
-} 
+}
 
 export const filter = async (request, response) => {
     try {
-        const { project_id: projectId, due_date: dueDate, is_completed: isCompleted, created_at: createdAt} = request.query;
-        const responseData = await Task.filter({projectId, dueDate, isCompleted, createdAt})
+        const { project_id: projectId, due_date: dueDate, is_completed: isCompleted, created_at: createdAt } = request.query;
+        const responseData = await Task.filter({ projectId, dueDate, isCompleted, createdAt })
         response.status(200).send(responseData);
     } catch (err) {
-        response.status(500).send({message: err.message || "Server error"})
+        response.status(500).send({ message: err.message || "Server error" })
     }
 }
 
@@ -61,62 +61,21 @@ export const updateTask = async (request, response) => {
         const taskId = request.params.id;
         const responseData = await Task.update(taskId, updatedTask)
         if (responseData.message) {
-            return response.status(404).send(data);
+            return response.status(404).send(responseData);
         } else {
-            return response.status(200).send(data);
+            return response.status(200).send(responseData);
         }
     } catch (err) {
-        response.status(500).send({ message: err.message || "Some error occurred while reading the data"});
+        response.status(500).send({ message: err.message || "Some error occurred while reading the data" });
     }
 };
 
-export const deleteTask = (request, response) => {
-    const taskId = request.params.id;
-    Task.remove(taskId, (err, responseData) => {
-        if (err) {
-            return response.status(500).send({ message: err.message || "Some error occurred while attempting delete of Task." })
-        } else if (!responseData) {
-            response.status(404).send({ message: taskId ? `Task with ID ${taskId} not found.` : "No tasks found to delete.", })
-        } else {
-            response.send(responseData)
-        }
-    })
-};
-
-export const filterTasks = (request, response) => {
-    const projectId = request.params.project_id;
-    const dueDate = request.params.due_date;
-    const isCompleted = request.params.is_completed;
-    const createdAt = request.params.created_at;
-    const filterRequirements = {
-        projectId: projectId,
-        dueDate: dueDate,
-        isCompleted: isCompleted,
-        createdAt: createdAt
-    };
-    Task.filter(filterRequirements, (err, responseData) => {
-        if (err) {
-            return response.status(500).send({
-                message: err.message || "Some error occurred while filtering of Tasks."
-            })
-        } else if (!responseData) {
-            return response.status(404).send({
-                message: `No tasks found with the given filter requirements`
-            })
-        } else {
-            response.send(responseData)
-        }
-    });
-};
-
-export const filterProject2 = (request, response) => {
-    Task.filter(filterOptions, (err, responseData) => {
-        if (err) {
-            response.status(500).send({ message: err.message || "Some error occurred while filtering the project(s)" })
-        } else if (responseData.length) {
-            response.send(responseData)
-        } else {
-            response.send({ message: "No projects found with the given filter options." })
-        }
-    })
+export const deleteTask = async (request, response) => {
+    try {
+        const taskId = request.params.id;
+        const responseData = await Task.remove(taskId)
+        response.status(200).send(responseData);
+    } catch (err) {
+        response.status(500).send({ message: err.message || "Server error" })
+    }
 };

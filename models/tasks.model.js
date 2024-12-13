@@ -43,6 +43,33 @@ class Task {
         })
     }
 
+    static filter = ({projectId, dueDate, isCompleted, createdAt}) => {
+        return new Promise((resolve, reject) => {
+            let query = `SELECT * FROM tasks WHERE 1=1`;
+            const params= [];
+            if(projectId) {
+                query += ` and project_id = ?`
+                params.push(projectId)
+            }
+            if(dueDate) {
+                query += ` and due_date like ?`
+                params.push(`%${dueDate}%`)
+            }
+            if(isCompleted) {
+                query += ` and is_completed = ?`
+                params.push(isCompleted)
+            }
+            if(createdAt) {
+                query += ` and created_at like ?`
+                params.push(`%${createdAt}%`)
+            }
+            db.all(query, params, (err, rows) => {
+                if(err) reject (err);
+                else resolve(rows);
+            })
+        })
+    }
+
     static update(taskId, updatedTask, response) {
         const query = `
         UPDATE tasks

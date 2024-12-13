@@ -36,6 +36,16 @@ export const read = (request, response) => {
     })
 };
 
+export const filter = async (request, response) => {
+    try {
+        const { project_id: projectId, due_date: dueDate, is_completed: isCompleted, created_at: createdAt} = request.query;
+        const responseData = await Task.filter({projectId, dueDate, isCompleted, createdAt})
+        response.status(200).send(responseData);
+    } catch (err) {
+        response.status(500).send({message: err.message || "Server error"})
+    }
+}
+
 export const updateTask = (request, response) => {
     if (!request.body) {
         console.error("Request cannot be empty")

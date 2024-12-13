@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
 
-export default function generateComments(num, maxProjects, maxTasks) {
+export default function generateComments(num, maxProjects, maxTasks, maxUsers) {
     const comments = [];
     for (let i = 1; i <= num; i++) {
         const projectId = faker.number.int({ min: 1, max: maxProjects });
         const taskId = faker.number.int({ min: 1, max: maxTasks });
-        const userId = faker.number.int({ min: 1, max: 100 });
+        const userId = faker.number.int({ min: 1, max: maxUsers });
         if(i%2) {
             comments.push({
                 content: faker.lorem.sentence(),

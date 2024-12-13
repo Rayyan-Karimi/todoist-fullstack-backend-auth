@@ -43,8 +43,11 @@ export const updateComment = (request, response) => {
     }
     const updatedComment = new Comment(
         request.body.content,
-        request.body.task_id
+        request.body.user_id,
+        request.body.project_id,
+        request.body.task_id,
     )
+    console.log("updateComment", updatedComment)
     const commentId = request.params.id;
     Comment.update(commentId, updatedComment, (err, responseData) => {
         if (err) {

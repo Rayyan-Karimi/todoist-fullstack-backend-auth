@@ -44,12 +44,16 @@ class Comment {
     }
 
     static update(commentId, updatedComment, response) {
-        const query = `
-        Update comments
-        set content = ?, project_id = ?, task_id = ?, user_id = ?
-        where id = ?
-        `
-        const params = [updatedComment.content, updatedComment.projectId, updatedComment.taskId, updatedComment.userId, commentId]
+        let params = []
+        let query = "Update comments "
+        if(updatedComment.taskId) {
+            query += `set content = ?, task_id = ?, user_id = ? where id = ?`
+            params = [updatedComment.content, updatedComment.taskId, updatedComment.userId, commentId]
+        } else if(updatedComment.projectId) {
+            query += `set content = ?, project_id = ?, user_id = ? where id = ?`
+            params = [updatedComment.content, updatedComment.projectId, updatedComment.userId, commentId]
+        }
+        console.log("params", params)
         db.run(query, params, function (err) {
             if (err) {
                 console.error("Error updating the Comment with comment id =", commentId, err.message)
@@ -75,7 +79,7 @@ class Comment {
                 console.log(`Delete request- No comment found with ID ${commentId}`);
                 response({ message: `Delete request- No comment found with the given ID - ${commentId}` }, null);
             } else {
-                const message = commentId? `Deleted comment ID with ID = ${commentId}`: "All comments deleted successfully!";
+                const message = commentId ? `Deleted comment ID with ID = ${commentId}` : "All comments deleted successfully!";
                 response(null, { message: message });
                 console.log(message);
             }

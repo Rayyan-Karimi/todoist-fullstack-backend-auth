@@ -1,64 +1,73 @@
 import e from 'express';
 import Task from '../models/tasks.model.js';
 
-export const createTask = (request, response) => {
-    if (!request.body) {
-        console.error("Request cannot be empty")
-        return response.status(400).send({ message: "Request cannot be empty" })
-    }
-    const task = new Task(
-        request.body.content,
-        request.body.description,
-        request.body.due_date,
-        request.body.is_completed || 0,
-        request.body.project_id,
-    )
-    Task.create(task, (err, responseData) => {
-        if (err) {
-            return response.status(500).send({ message: err.message || "Some error occurred while creating the Task." })
+export const createTask = async (request, response) => {
+    try {
+        if (!request.body) {
+            console.error("Request cannot be empty")
+            return response.status(400).send({ message: "Request cannot be empty" })
         }
-        response.send(responseData)
-    })
+        const task = new Task(
+            request.body.content,
+            request.body.description,
+            request.body.due_date,
+            request.body.is_completed || 0,
+            request.body.project_id,
+        )
+        const responseData = await Task.create(task);
+        response.send({message: "Creation success.", addition: responseData})
+    } catch (err) {
+        return response.status(500).send({ message: err.message || "Some error occurred while creating the Task." })
+    }
 };
 
-export const read = (request, response) => {
-    const taskId = request.params.id;
-    Task.findAll(taskId, (err, responseData) => {
-        if (err) {
-            console.error("Some error occurred while reading the Task(s)", err.message)
-            response.status(500).send({ message: err.message || "Some error occurred while reading the Task(s)" })
-        } else if (!responseData || responseData.length === 0) {
-            console.error(taskId ? `No task found with the given ID ${taskId}` : "No tasks found.")
+export const read = async (request, response) => {
+    try {
+        const taskId = request.params.id;
+        const responseData = await Task.findAll(taskId);
+        if (!responseData || responseData.length === 0) {
             response.status(404).send({ message: taskId ? `No task found with the given ID ${taskId}` : "No tasks found.", });
         } else {
-            console.log(responseData)
-            response.send(responseData);
+            response.status(200).send(responseData);
         }
-    })
-};
-
-export const updateTask = (request, response) => {
-    if (!request.body) {
-        console.error("Request cannot be empty")
-        return response.status(400).send({ message: "Request cannot be empty" })
+    } catch (err) {
+        response.status(500).send({ message: err.message || "Some error occurred while reading the data"});
     }
-    const updatedTask = new Task(
-        request.body.content,
-        request.body.description,
-        request.body.due_date,
-        request.body.is_completed,
-        request.body.project_id
-    )
-    const taskId = request.params.id;
-    Task.update(taskId, updatedTask, (err, responseData) => {
-        if (err) {
-            return response.status(500).send({ message: err.message || "Some error occurred while update of Task." })
-        } else if (!responseData) {
-            return response.status(404).send({ message: `No task found with id= ${taskId}` })
-        } else {
-            response.send(responseData)
+} 
+
+export const filter = async (request, response) => {
+    try {
+        const { project_id: projectId, due_date: dueDate, is_completed: isCompleted, created_at: createdAt} = request.query;
+        const responseData = await Task.filter({projectId, dueDate, isCompleted, createdAt})
+        response.status(200).send(responseData);
+    } catch (err) {
+        response.status(500).send({message: err.message || "Server error"})
+    }
+}
+
+export const updateTask = async (request, response) => {
+    try {
+        if (!request.body) {
+            console.error("Request cannot be empty")
+            return response.status(400).send({ message: "Request cannot be empty" })
         }
-    })
+        const updatedTask = new Task(
+            request.body.content,
+            request.body.description,
+            request.body.due_date,
+            request.body.is_completed,
+            request.body.project_id
+        )
+        const taskId = request.params.id;
+        const responseData = await Task.update(taskId, updatedTask)
+        if (responseData.message) {
+            return response.status(404).send(data);
+        } else {
+            return response.status(200).send(data);
+        }
+    } catch (err) {
+        response.status(500).send({ message: err.message || "Some error occurred while reading the data"});
+    }
 };
 
 export const deleteTask = (request, response) => {

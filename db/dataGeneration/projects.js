@@ -1,4 +1,4 @@
-import {faker} from '@faker-js/faker'
+import { faker } from '@faker-js/faker';
 
 export default function generateProjects (num, maxUsers) {
     const projects = []

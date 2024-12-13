@@ -1,7 +1,7 @@
 import path from 'path';
 import sqlite3 from 'sqlite3';
 
-const dbPath = path.resolve("./testdb.db");
+const dbPath = path.resolve("./testdb.sqlite");
 const sqlite3Verbose = sqlite3.verbose();
 
 export const db = new sqlite3Verbose.Database(dbPath, sqlite3Verbose.OPEN_READWRITE, (err) => {
@@ -23,7 +23,7 @@ export const createTables = () => {
     });
 
     const usersTable = `
-    CREATE TABLE users (
+    CREATE TABLE if not exists users (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
@@ -32,7 +32,7 @@ export const createTables = () => {
     `;
 
     const projectsTable = `
-    CREATE TABLE projects (
+    CREATE TABLE if not exists projects (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL, 
         color TEXT NOT NULL,
@@ -43,7 +43,7 @@ export const createTables = () => {
     `;
 
     const tasksTable = `
-    CREATE TABLE tasks (
+    CREATE TABLE if not exists tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         content TEXT NOT NULL,
         description TEXT NOT NULL, 
@@ -56,7 +56,7 @@ export const createTables = () => {
     `;
 
     const commentsTable = `
-    CREATE TABLE comments (
+    CREATE TABLE if not exists comments (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         content TEXT NOT NULL,
         posted_at TEXT DEFAULT CURRENT_TIMESTAMP,

@@ -1,7 +1,7 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
-import { createTables } from '../db/dbConfig.js'
+import { createTables } from '../db/db.config.js'
 import CommentRoutes from '../routes/comments.routes.js'
 import ProjectRoutes from '../routes/projects.routes.js'
 import TaskRoutes from '../routes/tasks.routes.js'

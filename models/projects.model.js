@@ -1,4 +1,4 @@
-import { db } from '../db/dbConfig.js';
+import { db } from '../db/db.config.js';
 
 class Project {
     constructor(name, color, isFavorite, userId) {

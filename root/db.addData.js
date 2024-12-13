@@ -1,7 +1,7 @@
 import { performance } from 'perf_hooks';
 import { db } from '../db/dbConfig.js';
-import generateProjects from '../db/projects.config.js';
-import generateTasks from '../db/tasks.config.js';
+import generateProjects from '../db/projects.js';
+import generateTasks from '../db/tasks.js';
 const BATCH_SIZE = 1000;
 
 // Helper function to insert data in batches

@@ -6,7 +6,7 @@ export default function generateTasks(num, maxProjects) {
         todos.push({
             content: faker.lorem.sentence(),
             description: faker.lorem.paragraph(),
-            due_date: faker.date.future().toISOString(),
+            due_date: faker.date.future().toISOString().split('T')[0],
             is_completed: faker.datatype.boolean(),
             project_id: faker.number.int({ min: 1, max: maxProjects })
         });

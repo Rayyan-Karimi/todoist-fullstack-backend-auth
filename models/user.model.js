@@ -60,8 +60,8 @@ class User {
                     console.log({ message: `No user found with id=${userId}` })
                     reject(`No user found with id=${userId}`);
                 } else {
-                    console.log({ id: userId, successMessage: `Updated entried for id=${userId}` })
-                    resolve({ id: userId, successMessage: `Updated entried for id=${userId}` });
+                    console.log({ id: userId, successMessage: `Updated entries for id=${userId}` })
+                    resolve({ id: userId, successMessage: `Updated entries for id=${userId}` });
                 }
             })
         })

@@ -3,11 +3,11 @@ import { postUserSchema, putUserSchema } from '../validation/users.js';
 
 export const createUser = async (request, response) => {
     try {
-        await postUserSchema.validate(request.body, { abortEarly: false });
+        const validatedUser = await postUserSchema.validate(request.body, { abortEarly: false });
         const user = new User(
-            request.body.name,
-            request.body.email,
-            request.body.password
+            validatedUser.name,
+            validatedUser.email,
+            validatedUser.password
         )
         const responseData = await User.create(user);
         response.status(200).send(responseData)
@@ -18,9 +18,17 @@ export const createUser = async (request, response) => {
                 message: e.message
             }))
             response.status(400).send({ errors });
+        } else {
+            console.error("Error:", err)
+            response.status(500).json({
+                message: "Error updating user",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
+            });
         }
-        console.error("Error:", err)
-        response.status(500).json({ message: 'Error creating user', err });
     }
 };
 
@@ -52,8 +60,16 @@ export const updateUser = async (request, response) => {
                 message: e.message
             }))
             response.status(400).send({ errors });
+        } else {
+            response.status(500).send({
+                message: "Error updating user",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
+            })
         }
-        response.status(500).send({ error: err })
     }
 };
 

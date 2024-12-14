@@ -1,23 +1,36 @@
-import e from 'express';
 import Task from '../models/tasks.model.js';
+import { taskSchema } from '../validation/tasks.js'
 
 export const createTask = async (request, response) => {
     try {
-        if (!request.body) {
-            console.error("Request cannot be empty")
-            return response.status(400).send({ message: "Request cannot be empty" })
-        }
+        const validatedTask = await taskSchema.validate(request.body, { abortEarly: false });
         const task = new Task(
-            request.body.content,
-            request.body.description,
-            request.body.due_date,
-            request.body.is_completed || 0,
-            request.body.project_id,
-        )
+            validatedTask.content,
+            validatedTask.description,
+            validatedTask.due_date,
+            validatedTask.is_completed || 0,
+            validatedTask.project_id
+        );
         const responseData = await Task.create(task);
         response.send({ message: "Creation success.", addition: responseData })
     } catch (err) {
-        return response.status(500).send({ message: err.message || "Some error occurred while creating the Task." })
+        if (err.name === "ValidationError") {
+            const errors = err.inner.map((e) => ({
+                field: e.path,
+                message: e.message
+            }))
+            response.status(400).send({ errors });
+        } else {
+            console.error("Error:", err)
+            response.status(500).json({
+                message: "Error creating Task",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
+            });
+        }
     }
 };
 
@@ -47,26 +60,27 @@ export const filter = async (request, response) => {
 
 export const updateTask = async (request, response) => {
     try {
-        if (!request.body) {
-            console.error("Request cannot be empty")
-            return response.status(400).send({ message: "Request cannot be empty" })
-        }
-        const updatedTask = new Task(
-            request.body.content,
-            request.body.description,
-            request.body.due_date,
-            request.body.is_completed,
-            request.body.project_id
-        )
+        const validatedTask = await taskSchema.validate(request.body, { abortEarly: false })
         const taskId = request.params.id;
-        const responseData = await Task.update(taskId, updatedTask)
+        const responseData = await Task.update(taskId, validatedTask)
         if (responseData.message) {
             return response.status(404).send(responseData);
         } else {
-            return response.status(200).send(responseData);
+            return response.status(200).send({ message: "Task updated successfully", task: responseData });
         }
     } catch (err) {
-        response.status(500).send({ message: err.message || "Some error occurred while reading the data" });
+        if (err.name === "ValidationError") {
+            const errors = err.inner.map((e) => ({
+                field: e.path,
+                message: e.message,
+            }));
+            response.status(400).send({ errors });
+        } else {
+            response.status(500).send({
+                message: "Error updating task.",
+                error: err.message || "Unknown error occurred.",
+            });
+        }
     }
 };
 

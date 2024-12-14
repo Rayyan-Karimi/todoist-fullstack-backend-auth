@@ -17,42 +17,34 @@ export const createUser = async (request, response) => {
 export const read = async (request, response) => {
     try {
         const userId = request.params.id;
-        const responseData = User.findAll(userId);
+        const responseData = await User.findAll(userId);
+        if (!responseData || responseData.length === 0) {
+            response.status(404).send({ message: userId ? `No users found with the given ID ${userId}` : "No users found.", });
+        } else {
+            response.status(200).send(responseData);
+        }
+    } catch (err) {
+        response.status(500).send({ error: err || "Some error occurred while reading the data" });
+    }
+};
+
+export const updateUser = async (request, response) => {
+    try {
+        const userId = request.params.id;
+        const { name: newName, password: newPassword } = request.body;
+        const responseData = await User.update(userId, { newName, newPassword })
         response.status(200).send(responseData)
     } catch (err) {
-        response.status(500).json({ error: err, message: 'Error reading user(s)' });
+        response.status(500).send({ error: err })
     }
 };
 
-export const updateUser = (request, response) => {
-    if (!request.body) {
-        console.error("Request cannot be empty")
-        return response.status(400).send({ message: "Request cannot be empty" })
+export const deleteUser = async (request, response) => {
+    try {
+        const userId = request.params.id;
+        const responseData = await User.remove(userId);
+        response.status(200).send(responseData)
+    } catch (err) {
+        response.status(500).send({ error: err })
     }
-    const userId = request.params.id;
-    const newEmail = request.body.email;
-    const newPassword = request.body.password;
-    const updatedUser = new User(
-        newName,
-        newEmail,
-        newPassword
-    )
-    User.update(userId, updatedUser, (err, responseData) => {
-        if (err) {
-            return response.status(500).send({ message: err.message || "Some error occurred while update of project." })
-        }
-        response.send(responseData)
-    })
-
-
-};
-
-export const deleteUser = (request, response) => {
-    const userId = request.params.id;
-    User.remove(userId, (err, responseData) => {
-        if (err) {
-            return response.status(500).send({ message: err.message || "Some error occurred while attempting delete of project." })
-        }
-        response.send(responseData)
-    })
 };

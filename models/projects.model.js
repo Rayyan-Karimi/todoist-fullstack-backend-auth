@@ -22,7 +22,7 @@ class Project {
         })
     }
 
-    static findAll(projectId, response) {
+    static findAll(projectId) {
         return new Promise((resolve, reject) => {
             let query = "Select * from projects"
             if (projectId) query += ` where id = ${projectId}`

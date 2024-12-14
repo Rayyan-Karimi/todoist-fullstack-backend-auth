@@ -35,7 +35,7 @@ class Project {
 
     static update(projectId, updatedProject) {
         return new Promise((resolve, reject) => {
-            const query = `update projects set name = ?, color=?, is_favorite=?, user_id=? where id = ?`
+            const query = `update projects set name = ?, color=?, is_favorite = ?, user_id = ? where id = ?`
             const params = [updatedProject.name, updatedProject.color, updatedProject.isFavorite, updatedProject.userId, projectId]
             db.run(query, params, function (err) {
                 if (err) reject(err);

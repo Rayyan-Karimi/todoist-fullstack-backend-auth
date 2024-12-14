@@ -9,7 +9,6 @@ const TaskRoutes = (server) => {
     router.put("/:id", tasks.updateTask)
     router.delete("/", tasks.deleteTask)
     router.delete("/:id", tasks.deleteTask)
-    router.post("/filter", tasks.filter)
     server.use("/api/tasks", router)
 };
 export default TaskRoutes;

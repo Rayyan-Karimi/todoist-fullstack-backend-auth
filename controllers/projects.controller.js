@@ -2,10 +2,6 @@ import Project from '../models/projects.model.js';
 
 export const createProject = async (request, response) => {
     try {
-        if (!request.body) {
-            console.error("Request cannot be empty")
-            return response.status(400).send({ message: "Request cannot be empty" })
-        }
         const task = new Project(
             request.body.name,
             request.body.color,

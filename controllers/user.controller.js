@@ -1,35 +1,27 @@
 import User from '../models/user.model.js';
 
-export const createUser = (request, response) => {
-    if (!request.body) {
-        console.error("Request cannot be empty")
-        return response.status(400).send({ message: "Request cannot be empty" })
+export const createUser = async (request, response) => {
+    try {
+        const user = new User(
+            request.body.name,
+            request.body.email,
+            request.body.password
+        )
+        const responseData = await User.create(user);
+        response.status(200).send(responseData)
+    } catch (err) {
+        response.status(500).json({ message: 'Error creating user' });
     }
-    const project = new User(
-        request.body.name,
-        request.body.email,
-        request.body.password
-    )
-
-    User.create(project, (err, responseData) => {
-        if (err) {
-            return response.status(500).send({ message: err.message || "Some error occurred while creating the project." })
-        }
-        response.send(responseData)
-    })
 };
 
-export const read = (request, response) => {
-    const userId = request.params.id;
-    User.findAll(userId, (err, responseData) => {
-        if (err) {
-            response.status(500).send({ message: err.message || "Some error occurred while reading the project(s)" })
-        } else if (responseData.length) {
-            response.send(responseData)
-        } else {
-            response.send({ message: userId? `No user found with ID = ${userId}`:"No users found." })
-        }
-    })
+export const read = async (request, response) => {
+    try {
+        const userId = request.params.id;
+        const responseData = User.findAll(userId);
+        response.status(200).send(responseData)
+    } catch (err) {
+        response.status(500).json({ error: err, message: 'Error reading user(s)' });
+    }
 };
 
 export const updateUser = (request, response) => {
@@ -51,8 +43,8 @@ export const updateUser = (request, response) => {
         }
         response.send(responseData)
     })
-     
-    
+
+
 };
 
 export const deleteUser = (request, response) => {

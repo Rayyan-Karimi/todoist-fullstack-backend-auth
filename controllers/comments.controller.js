@@ -37,24 +37,17 @@ export const readComments = (request, response) => {
 };
 
 export const updateComment = (request, response) => {
-    if (!request.body) {
-        console.error("Request cannot be empty")
-        return response.status(400).send({ message: "Request cannot be empty" })
-    }
-    const updatedComment = new Comment(
-        request.body.content,
-        request.body.user_id,
-        request.body.project_id,
-        request.body.task_id,
-    )
-    console.log("updateComment", updatedComment)
     const commentId = request.params.id;
-    Comment.update(commentId, updatedComment, (err, responseData) => {
+    console.log("id", commentId);
+    Comment.update(commentId, request.body.content, (err, responseData) => {
         if (err) {
+            console.log('Im in 500')
             return response.status(500).send({ message: err.message || "Some error occurred while update of Comment." })
         } else if (!responseData) {
+            console.log('Im in 404')
             return response.status(404).send({ message: `No comment found with id= ${commentId}` })
         } else {
+            console.log('Im in 200')
             response.send(responseData)
         }
     })

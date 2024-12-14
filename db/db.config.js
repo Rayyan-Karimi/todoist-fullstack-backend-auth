@@ -61,14 +61,11 @@ export const createTables = () => {
         content TEXT NOT NULL,
         posted_at TEXT DEFAULT CURRENT_TIMESTAMP,
         user_id INTEGER NOT NULL,
-        project_id INTEGER,
+        project_id INTEGER NOT NULL,
         task_id INTEGER,
         FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
         FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        CHECK (
-            (project_id IS NULL AND task_id IS NOT NULL) OR (project_id IS NOT NULL AND task_id IS NULL)
-        )
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )
     `;
 

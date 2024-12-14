@@ -6,7 +6,7 @@ export default function generateComments(num, maxProjects, maxTasks, maxUsers) {
         const projectId = faker.number.int({ min: 1, max: maxProjects });
         const taskId = faker.number.int({ min: 1, max: maxTasks });
         const userId = faker.number.int({ min: 1, max: maxUsers });
-        if(i%2) {
+        if(i%3) {
             comments.push({
                 content: faker.lorem.sentence(),
                 projectId: projectId,
@@ -16,7 +16,7 @@ export default function generateComments(num, maxProjects, maxTasks, maxUsers) {
         } else {
             comments.push({
                 content: faker.lorem.sentence(),
-                projectId: null,
+                projectId: projectId,
                 taskId: taskId,
                 userId: userId
             });

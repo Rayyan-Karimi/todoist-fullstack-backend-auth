@@ -43,16 +43,12 @@ class Comment {
         })
     }
 
-    static update(commentId, updatedComment, response) {
+    static update(commentId, updatedContent, response) {
         let params = []
         let query = "Update comments "
-        if(updatedComment.taskId) {
-            query += `set content = ?, task_id = ?, user_id = ? where id = ?`
-            params = [updatedComment.content, updatedComment.taskId, updatedComment.userId, commentId]
-        } else if(updatedComment.projectId) {
-            query += `set content = ?, project_id = ?, user_id = ? where id = ?`
-            params = [updatedComment.content, updatedComment.projectId, updatedComment.userId, commentId]
-        }
+        query += `set content = ? where id = ?`
+        params = [updatedContent, commentId]
+        console.log("#1", query, params);
         console.log("params", params)
         db.run(query, params, function (err) {
             if (err) {
@@ -62,8 +58,8 @@ class Comment {
                 console.log("No comment found with id=", commentId)
                 response({ message: `No comment found with id=${commentId}` }, null)
             } else {
-                console.log("Updated comment with id=", commentId, updatedComment)
-                response(null, { id: commentId, ...updatedComment })
+                console.log("Updated comment with id=", commentId, updatedContent)
+                response(null, { id: commentId, updatedContent })
             }
         })
     }

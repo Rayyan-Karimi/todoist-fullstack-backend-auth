@@ -118,8 +118,8 @@ const main = async () => {
     try {
         // await insertProjects(numberOfProjects, numberOfUsers)
         // await insertTasks(numberOfTasks, numberOfProjects)
-        // await insertComments(numberOfComments, numberOfProjects, numberOfTasks, numberOfUsers)
-        await insertUsers(numberOfUsers)
+        await insertComments(numberOfComments, numberOfProjects, numberOfTasks, numberOfUsers)
+        // await insertUsers(numberOfUsers)
         console.log(`Projects insertion time: ${projectsTime} seconds`);
         console.log(`Tasks insertion time: ${tasksTime} seconds`);
         console.log(`Comments insertion time: ${commentsTime} seconds`);

@@ -1,18 +1,35 @@
 
 import Comment from '../models/comments.model.js';
+import { commentsSchema, contentSchema } from '../validation/comments.js';
 
 export const createComment = async (request, response) => {
     try {
+        const validatedComment = await commentsSchema.validate(request.body, { abortEarly: false })
         const comment = new Comment(
-            request.body.content,
-            request.body.user_id,
-            request.body.project_id,
-            request.body.task_id
+            validatedComment.content,
+            validatedComment.user_id,
+            validatedComment.project_id,
+            validatedComment.task_id
         )
         const responseData = await Comment.create(comment);
-        response.status(200).send(responseData)
+        response.status(201).send(responseData)
     } catch (err) {
-        response.status(500).send({ message: err.message })
+        if (err.name === "ValidationError") {
+            return response.status(400).send({
+                message: "Validation failed",
+                errors: err.errors, // Array of validation errors
+            });
+        } else {
+            console.error("Error:", err)
+            response.status(500).json({
+                message: "Error creating comment.",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
+            });
+        }
     }
 };
 
@@ -32,15 +49,31 @@ export const readComments = async (request, response) => {
 
 export const updateComment = async (request, response) => {
     try {
+        const validatedComment = await contentSchema.validate(request.body, { abortEarly: false })
         const commentId = request.params.id;
-        const responseData = await Comment.update(commentId, request.body.content);
+        const responseData = await Comment.update(commentId, validatedComment.content);
         if (!responseData || responseData.length === 0) {
             response.status(404).send({ message: `No comment found with id= ${commentId}` })
         } else {
             response.status(200).send(responseData)
         }
     } catch (err) {
-        response.status(500).send({ message: err.message })
+        if (err.name === "ValidationError") {
+            return response.status(400).send({
+                message: "Validation failed",
+                errors: err.errors, // Array of validation errors
+            });
+        } else {
+            console.error("Error:", err)
+            response.status(500).json({
+                message: "Error updating comment.",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
+            });
+        }
     }
 };
 

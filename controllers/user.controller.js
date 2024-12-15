@@ -21,7 +21,7 @@ export const createUser = async (request, response) => {
         } else {
             console.error("Error:", err)
             response.status(500).json({
-                message: "Error updating user",
+                message: "Error creating user",
                 error: {
                     name: err.name,
                     code: err.code,

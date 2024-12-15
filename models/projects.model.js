@@ -39,7 +39,7 @@ class Project {
             const params = [updatedProject.name, updatedProject.color, updatedProject.isFavorite, updatedProject.userId, projectId]
             db.run(query, params, function (err) {
                 if (err) reject(err);
-                else resolve({ id: this.lastID, ...updatedProject })
+                else resolve({ id: projectId, ...updatedProject })
             })
         })
     }

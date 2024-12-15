@@ -76,9 +76,14 @@ export const updateTask = async (request, response) => {
             }));
             response.status(400).send({ errors });
         } else {
-            response.status(500).send({
-                message: "Error updating task.",
-                error: err.message || "Unknown error occurred.",
+            console.error("Error:", err)
+            response.status(500).json({
+                message: "Error updating task",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
             });
         }
     }

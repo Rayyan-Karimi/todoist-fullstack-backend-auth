@@ -5,7 +5,9 @@ export const projectSchema = yup.object({
         .string()
         .required('Project name is required')
         .max(40, "Project name must not exceed 40 characters"),
-    color: yup.string()
+    color: yup
+        .string()
+        .min(3, "Color must be at least of length - 3 characters")
         .required("Project color is required"),
     is_favorite: yup
         .number()
@@ -27,5 +29,3 @@ export const isFavoriteProjectSchema = yup.object({
         .default(0)
         .required("This is required for updating favorite status")
 });
-
-export default validateProject;

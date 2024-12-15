@@ -19,12 +19,16 @@ export const createProject = async (request, response) => {
                 errors: err.errors, // Array of validation errors
             });
         } else {
-            console.error("Error creating project:", err);
-            return response.status(500).send({
-                message: "Some error occurred while creating the project.",
-                error: err.message,
+            console.error("Error:", err)
+            response.status(500).json({
+                message: "Error creating project",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
             });
-        } // End of error handling
+        }
     }
 };
 
@@ -46,55 +50,58 @@ export const updateProject = async (request, response) => {
     try {
         const projectId = request.params.id;
         const validatedProject = await projectSchema.validate(request.body, { abortEarly: false });
-        const newIsFavorite = validatedProject.is_favorite;
-        const newName = validatedProject.name, newColor = validatedProject.color, newUserId = validatedProject.user_id;
-        if (projectId && newName && newColor && newUserId) {
-            const updatedProject = new Project(
-                newName,
-                newColor,
-                newIsFavorite || 0,
-                newUserId
-            )
-            const responseData = await Project.update(projectId, updatedProject);
-            response.status(200).send(responseData)
-        } else if (projectId && (newIsFavorite === 0 || newIsFavorite === 1)) {
-            console.log("Updating the project favorite status.", projectId)
-            console.log("New is_favorite status is:", newIsFavorite)
-            const responseData = await Project.updateFavorite(projectId, newIsFavorite);
-            response.status(200).send(responseData)
-        } else {
-            return response.status(500).send({ message: "Request body is not well defined - Some error occurred while update." })
-        }
+        const updatedProject = new Project(
+            validatedProject.name,
+            validatedProject.color,
+            validatedProject.is_favorite || 0,
+            validatedProject.user_id
+        )
+        const responseData = await Project.update(projectId, updatedProject);
+        response.status(200).send(responseData)
     } catch (err) {
-        return response.status(500).send({ message: err.message || "Some error occurred while update of project." })
+        if (err.name === "ValidationError") {
+            return response.status(400).send({
+                message: "Validation failed",
+                errors: err.errors, // Array of validation errors
+            });
+        } else {
+            console.error("Error:", err)
+            response.status(500).json({
+                message: "Error updating project.",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
+            });
+        }
     }
 };
 
 export const updateProjectIsFavorite = async (request, response) => {
     try {
         const projectId = request.params.id;
-        const validatedProject = await projectSchema.validate(request.body, { abortEarly: false });
+        const validatedProject = await isFavoriteProjectSchema.validate(request.body, { abortEarly: false });
         const newIsFavorite = validatedProject.is_favorite;
-        const newName = validatedProject.name, newColor = validatedProject.color, newUserId = validatedProject.user_id;
-        if (projectId && newName && newColor && newUserId) {
-            const updatedProject = new Project(
-                newName,
-                newColor,
-                newIsFavorite || 0,
-                newUserId
-            )
-            const responseData = await Project.update(projectId, updatedProject);
-            response.status(200).send(responseData)
-        } else if (projectId && (newIsFavorite === 0 || newIsFavorite === 1)) {
-            console.log("Updating the project favorite status.", projectId)
-            console.log("New is_favorite status is:", newIsFavorite)
-            const responseData = await Project.updateFavorite(projectId, newIsFavorite);
-            response.status(200).send(responseData)
-        } else {
-            return response.status(500).send({ message: "Request body is not well defined - Some error occurred while update." })
-        }
+        const responseData = await Project.updateFavorite(projectId, newIsFavorite);
+        response.status(200).send(responseData)
     } catch (err) {
-        return response.status(500).send({ message: err.message || "Some error occurred while update of project." })
+        if (err.name === "ValidationError") {
+            return response.status(400).send({
+                message: "Validation failed",
+                errors: err.errors, // Array of validation errors
+            });
+        } else {
+            console.error("Error:", err)
+            response.status(500).json({
+                message: "Error updating favorite status of project.",
+                error: {
+                    name: err.name,
+                    code: err.code,
+                    details: err.message
+                }
+            });
+        }
     }
 };
 

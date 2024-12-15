@@ -1,7 +1,7 @@
 import { performance } from 'perf_hooks';
+import generateComments from '../db/dataGeneration/comments.js';
 import generateProjects from '../db/dataGeneration/projects.js';
 import generateTasks from '../db/dataGeneration/tasks.js';
-import generateComments from '../db/dataGeneration/comments.js';
 import generateUsers from '../db/dataGeneration/users.js';
 import { db } from '../db/db.config.js';
 const BATCH_SIZE = 1000;

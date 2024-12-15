@@ -1,6 +1,5 @@
 
 import Comment from '../models/comments.model.js';
-<<<<<<< HEAD
 import { commentsSchema, contentSchema } from '../validation/comments.js';
 
 export const createComment = async (request, response) => {
@@ -9,33 +8,19 @@ export const createComment = async (request, response) => {
         const comment = new Comment(
             validatedComment.content,
             validatedComment.user_id,
-=======
-import { commentSchema, contentUpdateSchema } from '../validation/comments.js';
-
-export const createComment = async (request, response) => {
-    try {
-        const validatedComment = await commentSchema.validate(request.body, { abortEarly: false })
-        const comment = new Comment(
-            validatedComment.user_id,
-            validatedComment.content,
->>>>>>> b474e371dc18d469bb1b1fffcd49fb87a1fe1366
             validatedComment.project_id,
             validatedComment.task_id
         )
         const responseData = await Comment.create(comment);
-<<<<<<< HEAD
         response.status(201).send(responseData)
-=======
-        response.status(201).send({ message: "Comment created", addition: responseData})
->>>>>>> b474e371dc18d469bb1b1fffcd49fb87a1fe1366
     } catch (err) {
         if (err.name === "ValidationError") {
-            return response.status(400).send({
-                message: "Validation failed",
-                errors: err.errors, // Array of validation errors
-            });
+            const errors = err.inner.map((e) => ({
+                field: e.path,
+                message: e.message,
+            }));
+            response.status(400).send({ errors });
         } else {
-<<<<<<< HEAD
             console.error("Error:", err)
             response.status(500).json({
                 message: "Error creating comment.",
@@ -46,14 +31,6 @@ export const createComment = async (request, response) => {
                 }
             });
         }
-=======
-            console.error("Error creating project:", err);
-            return response.status(500).send({
-                message: "Some error occurred while creating the project.",
-                error: err.message,
-            });
-        } // End of error handling
->>>>>>> b474e371dc18d469bb1b1fffcd49fb87a1fe1366
     }
 };
 
@@ -75,12 +52,7 @@ export const updateComment = async (request, response) => {
     try {
         const validatedComment = await contentSchema.validate(request.body, { abortEarly: false })
         const commentId = request.params.id;
-<<<<<<< HEAD
         const responseData = await Comment.update(commentId, validatedComment.content);
-=======
-        const validatedContent = await contentUpdateSchema.validate(request.body.content)
-        const responseData = await Comment.update(commentId, validatedContent);
->>>>>>> b474e371dc18d469bb1b1fffcd49fb87a1fe1366
         if (!responseData || responseData.length === 0) {
             response.status(404).send({ message: `No comment found with id= ${commentId}` })
         } else {
@@ -88,12 +60,12 @@ export const updateComment = async (request, response) => {
         }
     } catch (err) {
         if (err.name === "ValidationError") {
-            return response.status(400).send({
-                message: "Validation failed",
-                errors: err.errors, // Array of validation errors
-            });
+            const errors = err.inner.map((e) => ({
+                field: e.path,
+                message: e.message,
+            }));
+            response.status(400).send({ errors });
         } else {
-<<<<<<< HEAD
             console.error("Error:", err)
             response.status(500).json({
                 message: "Error updating comment.",
@@ -104,14 +76,6 @@ export const updateComment = async (request, response) => {
                 }
             });
         }
-=======
-            console.error("Error creating project:", err);
-            return response.status(500).send({
-                message: "Some error occurred while creating the project.",
-                error: err.message,
-            });
-        } // End of error handling
->>>>>>> b474e371dc18d469bb1b1fffcd49fb87a1fe1366
     }
 };
 

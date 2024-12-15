@@ -14,10 +14,11 @@ export const createProject = async (request, response) => {
         response.status(201).send({ message: "Project creation success.", addition: responseData })
     } catch (err) {
         if (err.name === "ValidationError") {
-            return response.status(400).send({
-                message: "Validation failed",
-                errors: err.errors, // Array of validation errors
-            });
+            const errors = err.inner.map((e) => ({
+                field: e.path,
+                message: e.message,
+            }));
+            response.status(400).send({ errors });
         } else {
             console.error("Error:", err)
             response.status(500).json({
@@ -60,12 +61,12 @@ export const updateProject = async (request, response) => {
         response.status(200).send(responseData)
     } catch (err) {
         if (err.name === "ValidationError") {
-            return response.status(400).send({
-                message: "Validation failed",
-                errors: err.errors, // Array of validation errors
-            });
+            const errors = err.inner.map((e) => ({
+                field: e.path,
+                message: e.message,
+            }));
+            response.status(400).send({ errors });
         } else {
-<<<<<<< HEAD
             console.error("Error:", err)
             response.status(500).json({
                 message: "Error updating project.",
@@ -76,39 +77,6 @@ export const updateProject = async (request, response) => {
                 }
             });
         }
-=======
-            console.error("Error creating project:", err);
-            return response.status(500).send({
-                message: "Some error occurred while creating the project.",
-                error: err.message,
-            });
-        } // End of error handling
-    }
-};
-
-export const updateFavoriteInProject = async (request, response) => {
-    try {
-        const projectId = request.params.id;
-        const validatedIsFavoriteInProject = await isFavoriteProjectSchema.validate(request.body, { abortEarly: false });
-        const newIsFavorite = validatedIsFavoriteInProject.is_favorite;
-        console.log("Updating the project favorite status.", projectId)
-        console.log("New is_favorite status is:", newIsFavorite)
-        const responseData = await Project.updateFavorite(projectId, newIsFavorite);
-        response.status(200).send(responseData)
-    } catch (err) {
-        if (err.name === "ValidationError") {
-            return response.status(400).send({
-                message: "Validation failed",
-                errors: err.errors, // Array of validation errors
-            });
-        } else {
-            console.error("Error creating project:", err);
-            return response.status(500).send({
-                message: "Some error occurred while creating the project.",
-                error: err.message,
-            });
-        } // End of error handling
->>>>>>> b474e371dc18d469bb1b1fffcd49fb87a1fe1366
     }
 };
 
@@ -121,10 +89,11 @@ export const updateProjectIsFavorite = async (request, response) => {
         response.status(200).send(responseData)
     } catch (err) {
         if (err.name === "ValidationError") {
-            return response.status(400).send({
-                message: "Validation failed",
-                errors: err.errors, // Array of validation errors
-            });
+            const errors = err.inner.map((e) => ({
+                field: e.path,
+                message: e.message,
+            }));
+            response.status(400).send({ errors });
         } else {
             console.error("Error:", err)
             response.status(500).json({

@@ -5,6 +5,7 @@ const ProjectRoutes = (server) => {
     router.post("/", projects.createProject)
     router.get("/", projects.read)
     router.get("/:id", projects.read)
+    router.patch("/:id", projects.updateFavoriteInProject)
     router.put("/:id", projects.updateProject)
     router.delete("/:id", projects.deleteProject)
     router.delete("/", projects.deleteProject)

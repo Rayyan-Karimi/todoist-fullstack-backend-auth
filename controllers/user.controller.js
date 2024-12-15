@@ -10,7 +10,7 @@ export const createUser = async (request, response) => {
             validatedUser.password
         )
         const responseData = await User.create(user);
-        response.status(200).send(responseData)
+        response.status(201).send(responseData)
     } catch (err) {
         if (err.name === "ValidationError") {
             const errors = err.inner.map((e) => ({

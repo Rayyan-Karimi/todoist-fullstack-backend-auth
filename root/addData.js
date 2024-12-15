@@ -1,7 +1,7 @@
 import { performance } from 'perf_hooks';
+import generateComments from '../db/dataGeneration/comments.js';
 import generateProjects from '../db/dataGeneration/projects.js';
 import generateTasks from '../db/dataGeneration/tasks.js';
-import generateComments from '../db/dataGeneration/comments.js';
 import generateUsers from '../db/dataGeneration/users.js';
 import { db } from '../db/db.config.js';
 const BATCH_SIZE = 1000;
@@ -116,9 +116,9 @@ const main = async () => {
     const numberOfComments = 10000;
 
     try {
-        // await insertProjects(numberOfProjects, numberOfUsers)
-        // await insertTasks(numberOfTasks, numberOfProjects)
-        // await insertComments(numberOfComments, numberOfProjects, numberOfTasks, numberOfUsers)
+        await insertProjects(numberOfProjects, numberOfUsers)
+        await insertTasks(numberOfTasks, numberOfProjects)
+        await insertComments(numberOfComments, numberOfProjects, numberOfTasks, numberOfUsers)
         await insertUsers(numberOfUsers)
         console.log(`Projects insertion time: ${projectsTime} seconds`);
         console.log(`Tasks insertion time: ${tasksTime} seconds`);

@@ -1,5 +1,5 @@
 import Task from '../models/tasks.model.js';
-import { taskSchema } from '../validation/tasks.js'
+import { taskSchema } from '../validation/tasks.js';
 
 export const createTask = async (request, response) => {
     try {
@@ -12,7 +12,7 @@ export const createTask = async (request, response) => {
             validatedTask.project_id
         );
         const responseData = await Task.create(task);
-        response.send({ message: "Creation success.", addition: responseData })
+        response.status(201).send({ message: "Creation success.", addition: responseData })
     } catch (err) {
         if (err.name === "ValidationError") {
             const errors = err.inner.map((e) => ({

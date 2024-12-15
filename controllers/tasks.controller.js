@@ -72,7 +72,7 @@ export const updateTask = async (request, response) => {
         if (err.name === "ValidationError") {
             const errors = err.inner.map((e) => ({
                 field: e.path,
-                message: e.message,
+                message: e.message
             }));
             response.status(400).send({ errors });
         } else {

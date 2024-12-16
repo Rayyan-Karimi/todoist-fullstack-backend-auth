@@ -1,16 +1,21 @@
+import bcrypt from 'bcrypt';
 import { db } from '../db/db.config.js';
 
 class User {
     constructor(name, email, password) {
         this.name = name;
         this.email = email;
-        this.password = password;
+        this.password = password; // plain text password must be hashed before saving
     }
 
-    static create(newUser) {
-        return new Promise((resolve, reject) => {
+    static async create(newUser) {
+        return new Promise( async (resolve, reject) => {
+            // Hash the pass
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(newUser.password, saltRounds);
             const query = `insert into users (name, email, password) values(?, ?, ?)`
-            const params = [newUser.name, newUser.email, newUser.password]
+            // Send the hashed pass
+            const params = [newUser.name, newUser.email, hashedPassword]
             db.run(query, params, function (err) {
                 if (err) reject(err);
                 else resolve({ id: this.lastID, ...newUser })
@@ -20,11 +25,23 @@ class User {
 
     static findAll(userId) {
         return new Promise((resolve, reject) => {
-            let query = "Select * from users"
+            // Remove the pass from the details seen.
+            let query = "Select id, name, email from users"
             if (userId) query += ` where id = ${userId}`
             db.all(query, (err, rows) => {
                 if (err) reject(err);
                 else resolve(rows);
+            })
+        })
+    }
+
+    static findByEmail(email) {
+        return new Promise((resolve, reject) => {
+            // Remove the pass from the details seen.
+            const query = `Select * from users where email = '${email}'`;
+            db.get(query, (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
             })
         })
     }

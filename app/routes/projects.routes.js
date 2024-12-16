@@ -1,14 +1,17 @@
-import express from 'express'
-import * as projects from "../controllers/projects.controller.js"
+import express from 'express';
+import * as projects from "../controllers/projects.controller.js";
+import { verifyToken } from '../middleware/auth.middleware.js';
+
 const ProjectRoutes = (server) => {
     const router = express.Router()
-    router.post("/", projects.createProject)
+    router.post("/", verifyToken, projects.createProject)
+    router.patch("/:id", verifyToken, projects.updateProjectIsFavorite)
+    router.put("/:id", verifyToken, projects.updateProject)
+    router.delete("/:id", verifyToken, projects.deleteProject)
+    
     router.get("/", projects.read)
     router.get("/:id", projects.read)
-    router.patch("/:id", projects.updateProjectIsFavorite)
-    router.put("/:id", projects.updateProject)
-    router.delete("/:id", projects.deleteProject)
-    router.delete("/", projects.deleteProject)
+    
     server.use("/api/projects", router)
 }
 export default ProjectRoutes;

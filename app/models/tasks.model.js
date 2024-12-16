@@ -85,8 +85,7 @@ class Task {
 
     static remove(taskId) {
         return new Promise((resolve, reject) => {
-            let query = "DELETE FROM tasks";
-            if (taskId) query += ` WHERE id = ${taskId}`;
+            let query = `DELETE FROM tasks WHERE id = ${taskId}`;
             db.run(query, function (err) {
                 if (err) {
                     reject(err);

@@ -57,8 +57,7 @@ class Project {
 
     static remove(projectId) {
         return new Promise((resolve, reject) => {
-            let query = "Delete from projects"
-            if (projectId) query += ` where id = ${projectId}`
+            let query = `Delete from projects where id = ${projectId}`
             db.run(query, function (err) {
                 if (err) reject(err);
                 else if (projectId && this.changes === 0) {

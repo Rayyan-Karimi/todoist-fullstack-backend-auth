@@ -2,6 +2,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import { createTables } from '../db/db.config.js'
+import AuthRoutes from '../routes/auth.routes.js'
 import CommentRoutes from '../routes/comments.routes.js'
 import ProjectRoutes from '../routes/projects.routes.js'
 import TaskRoutes from '../routes/tasks.routes.js'
@@ -24,6 +25,7 @@ dotenv.config();
 createTables();
 
 // Add routes
+AuthRoutes(server)
 ProjectRoutes(server)
 TaskRoutes(server)
 CommentRoutes(server)

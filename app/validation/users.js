@@ -25,8 +25,4 @@ export const putUserSchema = yup.object().shape({
     password: yup
         .string()
         .min(6, "Password must be at least 6 characters"),
-}).test(
-    'at-least-one-field',
-    'At least one of name or password is required',
-    (value) => value.name || value.password // Ensure at least one of the two is present
-);
+});

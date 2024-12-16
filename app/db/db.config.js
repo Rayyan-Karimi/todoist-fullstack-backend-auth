@@ -1,7 +1,7 @@
 import path from 'path';
 import sqlite3 from 'sqlite3';
 
-const dbPath = path.resolve("./testdb.sqlite");
+const dbPath = path.resolve("./app/testdb.sqlite");
 const sqlite3Verbose = sqlite3.verbose();
 
 export const db = new sqlite3Verbose.Database(dbPath, sqlite3Verbose.OPEN_READWRITE, (err) => {

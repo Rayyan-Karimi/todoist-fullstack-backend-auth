@@ -10,7 +10,9 @@ import UsersRoutes from './routes/users.routes.js'
 
 const server = express()
 var corsRequestOptions = {
-    origin: "http://localhost:5173"
+    // origin: "http://localhost:5173"
+
+    origin: "*"
 }
 server.use(cors(corsRequestOptions))
 server.use(express.json())

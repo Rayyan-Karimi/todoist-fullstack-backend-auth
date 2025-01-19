@@ -31,14 +31,23 @@ export const createTables = () => {
     )
     `;
 
+    // const projectsTable = `
+    // CREATE TABLE if not exists projects (
+    //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //     name TEXT NOT NULL, 
+    //     color TEXT NOT NULL,
+    //     isFavorite INTEGER DEFAULT 0,
+    //     userId INTEGER NOT NULL,
+    //     FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+    // )
+    // `;
+
     const projectsTable = `
     CREATE TABLE if not exists projects (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL, 
         color TEXT NOT NULL,
-        is_favorite INTEGER DEFAULT 0,
-        user_id INTEGER NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        isFavorite INTEGER DEFAULT 0
     )
     `;
 
@@ -46,28 +55,28 @@ export const createTables = () => {
     CREATE TABLE if not exists tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         content TEXT NOT NULL,
-        description TEXT NOT NULL, 
-        due_date TEXT NOT NULL,
-        is_completed INTEGER DEFAULT 0,
-        project_id INTEGER NOT NULL,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        description TEXT, 
+        dueDate TEXT,
+        isCompleted INTEGER DEFAULT 0,
+        projectId INTEGER NOT NULL,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (projectId) REFERENCES projects(id) ON DELETE CASCADE
     )
     `;
 
-    const commentsTable = `
-    CREATE TABLE if not exists comments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        content TEXT NOT NULL,
-        posted_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        user_id INTEGER NOT NULL,
-        project_id INTEGER NOT NULL,
-        task_id INTEGER,
-        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-        FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-    )
-    `;
+    // const commentsTable = `
+    // CREATE TABLE if not exists comments (
+    //     id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    //     content TEXT NOT NULL,
+    //     postedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+    //     userId INTEGER NOT NULL,
+    //     projectId INTEGER NOT NULL,
+    //     taskId INTEGER,
+    //     FOREIGN KEY (projectId) REFERENCES projects(id) ON DELETE CASCADE,
+    //     FOREIGN KEY (taskId) REFERENCES tasks(id) ON DELETE CASCADE,
+    //     FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+    // )
+    // `;
 
     db.run(usersTable, (err) => {
         if (err) console.error("Error creating users table:", err.message);
@@ -81,8 +90,8 @@ export const createTables = () => {
         if (err) console.error("Error creating tasks table:", err.message);
         else console.log("Created tasks table.");
     });
-    db.run(commentsTable, (err) => {
-        if (err) console.error("Error creating comments table:", err.message);
-        else console.log("Created comments table.");
-    });
+    // db.run(commentsTable, (err) => {
+    //     if (err) console.error("Error creating comments table:", err.message);
+    //     else console.log("Created comments table.");
+    // });
 };

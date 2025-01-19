@@ -2,16 +2,21 @@ import Task from '../models/tasks.model.js';
 import { taskSchema } from '../validation/tasks.js';
 
 export const createTask = async (request, response) => {
+    console.log("Adding in backend:", request.body);
     try {
+        console.log("here");
         const validatedTask = await taskSchema.validate(request.body, { abortEarly: false });
+
         const task = new Task(
             validatedTask.content,
             validatedTask.description,
-            validatedTask.due_date,
-            validatedTask.is_completed || 0,
-            validatedTask.project_id
+            validatedTask.dueDate || Date.now(),
+            validatedTask.isCompleted || 0,
+            validatedTask.projectId
         );
+        console.log("TAsk:", validatedTask);
         const responseData = await Task.create(task);
+        console.log("response data:", responseData)
         response.status(201).send({ message: "Creation success.", addition: responseData })
     } catch (err) {
         if (err.name === "ValidationError") {
@@ -50,7 +55,7 @@ export const read = async (request, response) => {
 
 export const filter = async (request, response) => {
     try {
-        const { project_id: projectId, due_date: dueDate, is_completed: isCompleted, created_at: createdAt } = request.query;
+        const { projectId: projectId, dueDate: dueDate, isCompleted: isCompleted, createdAt: createdAt } = request.query;
         const responseData = await Task.filter({ projectId, dueDate, isCompleted, createdAt })
         response.status(200).send(responseData);
     } catch (err) {
@@ -60,6 +65,7 @@ export const filter = async (request, response) => {
 
 export const updateTask = async (request, response) => {
     try {
+        console.log('update task in controller', request.body)
         const validatedTask = await taskSchema.validate(request.body, { abortEarly: false })
         const taskId = request.params.id;
         const responseData = await Task.update(taskId, validatedTask)
@@ -93,6 +99,7 @@ export const deleteTask = async (request, response) => {
     try {
         const taskId = request.params.id;
         const responseData = await Task.remove(taskId)
+        console.log('removed:', responseData)
         response.status(200).send(responseData);
     } catch (err) {
         response.status(500).send({ message: err.message || "Server error" })

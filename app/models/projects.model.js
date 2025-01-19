@@ -1,20 +1,19 @@
 import { db } from '../db/db.config.js';
 
 class Project {
-    constructor(name, color, isFavorite, userId) {
+    // constructor(name, color, isFavorite, userId) {
+    constructor(name, color, isFavorite) {
         this.name = name;
         this.color = color;
         this.isFavorite = isFavorite;
-        this.userId = userId;
+        // this.userId = userId;
     }
 
     static create(newProject) {
         return new Promise((resolve, reject) => {
-            const query = `
-                insert into projects (name, color, is_favorite, user_id)
-                values(?, ?, ?, ?)
-            `
-            const params = [newProject.name, newProject.color, newProject.isFavorite, newProject.userId]
+            // const query = ` insert into projects (name, color, isFavorite, userId) values(?, ?, ?, ?) `
+            const query = ` insert into projects (name, color, isFavorite) values(?, ?, ?) `
+            const params = [newProject.name, newProject.color, newProject.isFavorite]
             db.run(query, params, function (err) {
                 if (err) reject(err);
                 else resolve({ id: this.lastID, ...newProject })
@@ -35,8 +34,10 @@ class Project {
 
     static update(projectId, updatedProject) {
         return new Promise((resolve, reject) => {
-            const query = `update projects set name = ?, color=?, is_favorite = ?, user_id = ? where id = ?`
-            const params = [updatedProject.name, updatedProject.color, updatedProject.isFavorite, updatedProject.userId, projectId]
+            const query = `update projects set name = ?, color=?, isFavorite = ? where id = ?`
+            // const query = `update projects set name = ?, color=?, isFavorite = ?, userId = ? where id = ?`
+            const params = [updatedProject.name, updatedProject.color || 'white', updatedProject.isFavorite, projectId]
+            console.log(params)
             db.run(query, params, function (err) {
                 if (err) reject(err);
                 else resolve({ id: projectId, ...updatedProject })
@@ -46,7 +47,7 @@ class Project {
 
     static updateFavorite(projectId, newIsFavorite, response) {
         return new Promise((resolve, reject) => {
-            const query = `update projects set is_favorite = ? where id = ?`
+            const query = `update projects set isFavorite = ? where id = ?`
             const params = [newIsFavorite, projectId]
             db.run(query, params, function (err) {
                 if (err) reject(err);

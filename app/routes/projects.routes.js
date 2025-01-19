@@ -4,14 +4,20 @@ import { verifyToken } from '../middleware/auth.middleware.js';
 
 const ProjectRoutes = (server) => {
     const router = express.Router()
-    router.post("/", verifyToken, projects.createProject)
-    router.patch("/:id", verifyToken, projects.updateProjectIsFavorite)
-    router.put("/:id", verifyToken, projects.updateProject)
-    router.delete("/:id", verifyToken, projects.deleteProject)
-    
+    // router.post("/", verifyToken, projects.createProject)
+    // router.patch("/:id", verifyToken, projects.updateProjectIsFavorite)
+    // router.put("/:id", verifyToken, projects.updateProject)
+    // router.delete("/:id", verifyToken, projects.deleteProject)
+
+
+    router.post("/", projects.createProject)
+    router.patch("/:id", projects.updateProjectIsFavorite)
+    router.put("/:id", projects.updateProject)
+    router.delete("/:id", projects.deleteProject)
+
     router.get("/", projects.read)
     router.get("/:id", projects.read)
-    
+
     server.use("/api/projects", router)
 }
 export default ProjectRoutes;

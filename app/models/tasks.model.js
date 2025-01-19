@@ -1,22 +1,22 @@
 import { db } from '../db/db.config.js';
 
 class Task {
-    constructor(content, description, due_date, is_completed, project_id, created_at) {
+    constructor(content, description, dueDate, isCompleted, projectId, createdAt) {
         this.content = content;
         this.description = description;
-        this.due_date = due_date;
-        this.project_id = project_id;
-        this.is_completed = is_completed;
-        this.created_at = created_at;
+        this.dueDate = dueDate;
+        this.projectId = projectId;
+        this.isCompleted = isCompleted;
+        this.createdAt = createdAt;
     }
 
     static create(newTask) {
         return new Promise((resolve, reject) => {
             const query = `
-            INSERT INTO tasks (content, description, due_date, is_completed, created_at, project_id)
+            INSERT INTO tasks (content, description, dueDate, isCompleted, createdAt, projectId)
             VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
             `;
-            const params = [newTask.content, newTask.description, newTask.due_date, newTask.is_completed, newTask.project_id]
+            const params = [newTask.content, newTask.description, newTask.dueDate, newTask.isCompleted, newTask.projectId]
             db.run(query, params, function (err) {
                 if (err) reject(err);
                 else resolve({ id: this.lastID, ...newTask });
@@ -41,19 +41,19 @@ class Task {
             let query = `SELECT * FROM tasks WHERE 1=1`;
             const params = [];
             if (projectId) {
-                query += ` and project_id = ?`
+                query += ` and projectId = ?`
                 params.push(projectId)
             }
             if (dueDate) {
-                query += ` and due_date like ?`
+                query += ` and dueDate like ?`
                 params.push(`%${dueDate}%`)
             }
             if (isCompleted) {
-                query += ` and is_completed = ?`
+                query += ` and isCompleted = ?`
                 params.push(isCompleted)
             }
             if (createdAt) {
-                query += ` and created_at like ?`
+                query += ` and createdAt like ?`
                 params.push(`%${createdAt}%`)
             }
             db.all(query, params, (err, rows) => {
@@ -67,10 +67,10 @@ class Task {
         return new Promise((resolve, reject) => {
             const query = `
             UPDATE tasks
-            SET content = ?, description = ?, due_date = ?, is_completed = ?, project_id = ?
+            SET content = ?, description = ?, dueDate = ?, isCompleted = ?, projectId = ?
             WHERE id = ?
             `;
-            const params = [updatedTask.content, updatedTask.description, updatedTask.due_date, updatedTask.is_completed, updatedTask.project_id, taskId];
+            const params = [updatedTask.content, updatedTask.description, updatedTask.dueDate, updatedTask.isCompleted, updatedTask.projectId, taskId];
             db.run(query, params, function (err) {
                 if (err) {
                     reject(err);

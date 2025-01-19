@@ -3,15 +3,16 @@ import { isFavoriteProjectSchema, projectSchema } from '../validation/projects.j
 
 export const createProject = async (request, response) => {
     try {
+        console.log("controller - create project")
         const validatedProject = await projectSchema.validate(request.body, { abortEarly: false });
         const project = new Project(
             validatedProject.name,
-            validatedProject.color,
-            validatedProject.is_favorite || 0,
-            validatedProject.user_id
+            validatedProject.color || 'white',
+            validatedProject.isFavorite || 0,
+            // validatedProject.userId
         )
         const responseData = await Project.create(project);
-        response.status(201).send({ message: "Project creation success.", addition: responseData })
+        response.status(201).send(responseData)
     } catch (err) {
         if (err.name === "ValidationError") {
             const errors = err.inner.map((e) => ({
@@ -35,6 +36,7 @@ export const createProject = async (request, response) => {
 
 export const read = async (request, response) => {
     try {
+        console.log("controller - read projects")
         const projectId = request.params.id;
         const responseData = await Project.findAll(projectId);
         if (!responseData || responseData.length === 0) {
@@ -49,16 +51,17 @@ export const read = async (request, response) => {
 
 export const updateProject = async (request, response) => {
     try {
+        console.log("controller - update project")
         const projectId = request.params.id;
         const validatedProject = await projectSchema.validate(request.body, { abortEarly: false });
         const updatedProject = new Project(
             validatedProject.name,
             validatedProject.color,
-            validatedProject.is_favorite || 0,
-            validatedProject.user_id
+            validatedProject.isFavorite || false,
+            // validatedProject.userId
         )
         const responseData = await Project.update(projectId, updatedProject);
-        response.status(200).send(responseData)
+        response.status(200).send({ ...responseData, id: Number.parseInt(responseData.id) })
     } catch (err) {
         if (err.name === "ValidationError") {
             const errors = err.inner.map((e) => ({
@@ -82,9 +85,10 @@ export const updateProject = async (request, response) => {
 
 export const updateProjectIsFavorite = async (request, response) => {
     try {
+        console.log("controller - update favorite project")
         const projectId = request.params.id;
         const validatedProject = await isFavoriteProjectSchema.validate(request.body, { abortEarly: false });
-        const newIsFavorite = validatedProject.is_favorite;
+        const newIsFavorite = validatedProject.isFavorite;
         const responseData = await Project.updateFavorite(projectId, newIsFavorite);
         response.status(200).send(responseData)
     } catch (err) {
@@ -110,6 +114,7 @@ export const updateProjectIsFavorite = async (request, response) => {
 
 export const deleteProject = async (request, response) => {
     try {
+        console.log("controller - delete project")
         const projectId = request.params.id;
         const responseData = await Project.remove(projectId);
         if (responseData.message) {

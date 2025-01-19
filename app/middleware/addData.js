@@ -35,7 +35,7 @@ const insertTasks = async (numberOfTasks, maxProjects) => {
             task.project_id
         ]);
         try {
-            await insertBatch('tasks', ['content', 'description', 'due_date', 'is_completed', 'project_id'], data);
+            await insertBatch('tasks', ['content', 'description', 'dueDate', 'isCompleted', 'projectId'], data);
             console.log(`Inserted ${i + BATCH_SIZE} tasks...`)
         } catch (err) {
             console.error(`Error inserting tasks in batch ${i} to ${i + BATCH_SIZE}: ${err}`);
@@ -53,10 +53,11 @@ const insertProjects = async (numberOfProjects, maxUsers) => {
     for (let i = 0; i < numberOfProjects; i += BATCH_SIZE) {
         const batch = generateProjects(Math.min(BATCH_SIZE, numberOfProjects - i), maxUsers); // don’t generate more records than needed in the last batch.
         const data = batch.map(project => [
-            project.name, project.color, project.is_favorite, project.user_id
+            // project.name, project.color, project.isFavorite, project.userId
+            project.name, project.color, project.isFavorite
         ]);
         try {
-            await insertBatch('projects', ['name', 'color', 'is_favorite', 'user_id'], data);
+            await insertBatch('projects', ['name', 'color', 'isFavorite'], data);
             console.log(`Inserted ${i + BATCH_SIZE} projects...`)
         } catch (err) {
             console.error(`Error inserting projects: ${err}`)
@@ -77,7 +78,7 @@ const insertComments = async (numberOfComments, numberOfProjects, numberOfTasks,
             comment.content, comment.projectId, comment.taskId, comment.userId
         ]);
         try {
-            await insertBatch('comments', ['content', 'project_id', 'task_id', 'user_id'], data);
+            await insertBatch('comments', ['content', 'projectId', 'taskId', 'userId'], data);
             console.log(`Inserted ${i + BATCH_SIZE} comments...`)
         } catch (err) {
             console.error(`Error inserting comments: ${err}`)
@@ -113,17 +114,17 @@ const main = async () => {
     const numberOfProjects = 100 // 1000000
     const numberOfTasks = 1000 // 10000000
     const numberOfUsers = 10;
-    const numberOfComments = 10000;
+    // const numberOfComments = 10000;
 
     try {
-        // await insertProjects(numberOfProjects, numberOfUsers)
-        // await insertTasks(numberOfTasks, numberOfProjects)
-        await insertComments(numberOfComments, numberOfProjects, numberOfTasks, numberOfUsers)
-        // await insertUsers(numberOfUsers)
+        await insertUsers(numberOfUsers)
+        await insertProjects(numberOfProjects, numberOfUsers)
+        await insertTasks(numberOfTasks, numberOfProjects)
+        // await insertComments(numberOfComments, numberOfProjects, numberOfTasks, numberOfUsers)
+        console.log(`Users insertion time: ${usersTime} seconds`);
         console.log(`Projects insertion time: ${projectsTime} seconds`);
         console.log(`Tasks insertion time: ${tasksTime} seconds`);
-        console.log(`Comments insertion time: ${commentsTime} seconds`);
-        console.log(`Users insertion time: ${usersTime} seconds`);
+        // console.log(`Comments insertion time: ${commentsTime} seconds`);
     } catch (err) {
         console.error("Error in data insertion:", err);
     }

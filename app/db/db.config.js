@@ -31,25 +31,25 @@ export const createTables = () => {
     )
     `;
 
-    // const projectsTable = `
-    // CREATE TABLE if not exists projects (
-    //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //     name TEXT NOT NULL, 
-    //     color TEXT NOT NULL,
-    //     isFavorite INTEGER DEFAULT 0,
-    //     userId INTEGER NOT NULL,
-    //     FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
-    // )
-    // `;
-
     const projectsTable = `
     CREATE TABLE if not exists projects (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL, 
         color TEXT NOT NULL,
-        isFavorite INTEGER DEFAULT 0
+        isFavorite INTEGER DEFAULT 0,
+        userId INTEGER NOT NULL,
+        FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
     )
     `;
+
+    // const projectsTable = `
+    // CREATE TABLE if not exists projects (
+    //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //     name TEXT NOT NULL, 
+    //     color TEXT NOT NULL,
+    //     isFavorite INTEGER DEFAULT 0
+    // )
+    // `;
 
     const tasksTable = `
     CREATE TABLE if not exists tasks (

@@ -13,7 +13,8 @@ export const projectSchema = yup.object({
     isFavorite: yup
         .boolean()
         .oneOf([true, false], 'Favorite status must be either true or false')
-        .default(false),
+        .default(false)
+    //     ,
     // userId: yup
     //     .number()
     //     .integer("User ID must be a number")

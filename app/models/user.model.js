@@ -9,13 +9,11 @@ class User {
     }
 
     static async create(newUser) {
-        return new Promise( async (resolve, reject) => {
-            // Hash the pass
-            const saltRounds = 10;
-            const hashedPassword = await bcrypt.hash(newUser.password, saltRounds);
+        return new Promise(async (resolve, reject) => {
+
             const query = `insert into users (name, email, password) values(?, ?, ?)`
             // Send the hashed pass
-            const params = [newUser.name, newUser.email, hashedPassword]
+            const params = [newUser.name, newUser.email, newUser.password]
             db.run(query, params, function (err) {
                 if (err) reject(err);
                 else resolve({ id: this.lastID, ...newUser })
@@ -26,7 +24,7 @@ class User {
     static findAll(userId) {
         return new Promise((resolve, reject) => {
             // Remove the pass from the details seen.
-            let query = "Select id, name, email from users"
+            let query = "Select * from users"
             if (userId) query += ` where id = ${userId}`
             db.all(query, (err, rows) => {
                 if (err) reject(err);

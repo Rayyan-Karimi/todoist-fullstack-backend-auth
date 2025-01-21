@@ -8,7 +8,8 @@ export const postUserSchema = yup.object().shape({
     email: yup
         .string()
         .required("Email is required")
-        .min(3, "Name must be at least 3 characters").email("Invalid email"),
+        .min(3, "Name must be at least 3 characters")
+        .email("Invalid email"),
     password: yup
         .string()
         .required("Password is required")
@@ -21,7 +22,8 @@ export const putUserSchema = yup.object().shape({
         .min(3, "Name must be at least 3 characters"),
     email: yup
         .string()
-        .email("Invalid email format"),
+        .email("Invalid email format")
+        .required('Email cant be empty'),
     password: yup
         .string()
         .min(6, "Password must be at least 6 characters"),

@@ -12,7 +12,6 @@ class Project {
     static create(newProject) {
         return new Promise((resolve, reject) => {
             const query = ` insert into projects (name, color, isFavorite, userId) values(?, ?, ?, ?) `
-            // const query = ` insert into projects (name, color, isFavorite) values(?, ?, ?) `
             const params = [newProject.name, newProject.color, newProject.isFavorite, newProject.userId]
             db.run(query, params, function (err) {
                 if (err) reject(err);
@@ -34,11 +33,8 @@ class Project {
 
     static update(projectId, updatedProject) {
         return new Promise((resolve, reject) => {
-            // const query = `update projects set name = ?, color=?, isFavorite = ? where id = ?`
             const query = `update projects set name = ?, color=?, isFavorite = ?, userId = ? where id = ?` // @TODO:
-            // const params = [updatedProject.name, updatedProject.color || 'white', updatedProject.isFavorite, projectId]
             const params = [updatedProject.name, updatedProject.color || 'white', updatedProject.isFavorite, updatedProject.userId, projectId]
-            console.log(params)
             db.run(query, params, function (err) {
                 if (err) reject(err);
                 else resolve({ id: projectId, ...updatedProject })
@@ -49,7 +45,6 @@ class Project {
     static updateFavorite(projectId, newIsFavorite, response) {
         return new Promise((resolve, reject) => {
             const query = `update projects set isFavorite = ? where id = ?`
-            // const query = `update projects set isFavorite = ?, userId = ? where id = ?`
             const params = [newIsFavorite, projectId] // @TODO: userId
             db.run(query, params, function (err) {
                 if (err) reject(err);

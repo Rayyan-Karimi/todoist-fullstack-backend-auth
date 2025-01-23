@@ -3,19 +3,15 @@ import { isFavoriteProjectSchema, projectSchema } from '../validation/projects.j
 
 export const createProject = async (request, response) => {
     try {
-        console.log("controller - create project")
         const validatedProject = await projectSchema.validate(request.body, { abortEarly: false });
         const userId = request.userId;
-        console.log(">>User id from token in cookie is:", userId)
         const project = new Project(
             validatedProject.name,
             validatedProject.color || 'white',
             validatedProject.isFavorite || 0,
-            userId // @TODO: how to get userId from the token
+            userId
         )
-        console.log('>>project created using constructor:', project)
         const responseData = await Project.create(project);
-        console.log('project created using modal db connection:', responseData)
         response.status(201).send(responseData)
     } catch (err) {
         if (err.name === "ValidationError") {
@@ -25,7 +21,7 @@ export const createProject = async (request, response) => {
             }));
             response.status(400).send({ errors });
         } else {
-            console.error("Error:", err)
+            console.error("Error during CREATE PROJECT:", err)
             response.status(500).json({
                 message: "Error creating project",
                 error: {
@@ -55,11 +51,9 @@ export const read = async (request, response) => {
 
 export const updateProject = async (request, response) => {
     try {
-        console.log("controller - update project")
         const projectId = request.params.id;
         const validatedProject = await projectSchema.validate(request.body, { abortEarly: false });
         const userId = request.userId;
-        console.log(">>User id from token in cookie is:", userId)
         const updatedProject = new Project(
             validatedProject.name,
             validatedProject.color,
@@ -76,7 +70,7 @@ export const updateProject = async (request, response) => {
             }));
             response.status(400).send({ errors });
         } else {
-            console.error("Error:", err)
+            console.error("Error during UPDATE PROJECT:", err)
             response.status(500).json({
                 message: "Error updating project.",
                 error: {
@@ -91,11 +85,9 @@ export const updateProject = async (request, response) => {
 
 export const updateProjectIsFavorite = async (request, response) => {
     try {
-        console.log("controller - update favorite project")
         const projectId = request.params.id;
         const validatedProject = await isFavoriteProjectSchema.validate(request.body, { abortEarly: false });
         const userId = request.userId;
-        console.log(">>User id from token in cookie is:", userId)
         const newIsFavorite = validatedProject.isFavorite;
         const responseData = await Project.updateFavorite(projectId, newIsFavorite);
         response.status(200).send(responseData)
@@ -122,10 +114,8 @@ export const updateProjectIsFavorite = async (request, response) => {
 
 export const deleteProject = async (request, response) => {
     try {
-        console.log("controller - delete project")
         const projectId = request.params.id;
         const userId = request.userId;
-        console.log(">>User id from token in cookie is:", userId)
         const responseData = await Project.remove(projectId, userId);
         if (responseData.message) {
             response.status(404).send(responseData);

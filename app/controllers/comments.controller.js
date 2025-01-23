@@ -21,7 +21,7 @@ export const createComment = async (request, response) => {
             }));
             response.status(400).send({ errors });
         } else {
-            console.error("Error:", err)
+            console.error("Error during CREATE COMMENT:", err)
             response.status(500).json({
                 message: "Error creating comment.",
                 error: {
@@ -66,7 +66,7 @@ export const updateComment = async (request, response) => {
             }));
             response.status(400).send({ errors });
         } else {
-            console.error("Error:", err)
+            console.error("Error during UPDATE COMMENT:", err)
             response.status(500).json({
                 message: "Error updating comment.",
                 error: {

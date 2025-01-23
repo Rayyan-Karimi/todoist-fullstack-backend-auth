@@ -14,7 +14,6 @@ class AddData {
     }
 
     static generateFakeData = (numberOfProjects, numberOfTasks, numberOfUsers) => {
-        console.log('model function called:', numberOfProjects, numberOfTasks, numberOfUsers)
         return new Promise(async (resolve, reject) => {
             try {
                 await addData(numberOfProjects, numberOfTasks, numberOfUsers);

@@ -17,7 +17,6 @@ class Comment {
                     console.error("Error creating new Comment", err.message)
                     reject(err);
                 } else {
-                    console.log("Created new comment", { id: this.lastID, ...newComment })
                     resolve({ id: this.lastID, ...newComment })
                 }
             })
@@ -42,8 +41,6 @@ class Comment {
             let query = "Update comments "
             query += `set content = ? where id = ?`
             params = [updatedContent, commentId]
-            console.log("#1", query, params);
-            console.log("params", params)
             db.run(query, params, function (err) {
                 if (err) {
                     reject(err);

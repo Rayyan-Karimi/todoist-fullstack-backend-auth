@@ -72,10 +72,8 @@ class User {
                 if (err) {
                     reject(err)
                 } else if (this.changes === 0) {
-                    console.log({ message: `No user found with id=${userId}` })
                     reject(`No user found with id=${userId}`);
                 } else {
-                    console.log({ id: userId, successMessage: `Updated entries for id=${userId}` })
                     resolve({ id: userId, successMessage: `Updated entries for id=${userId}` });
                 }
             })

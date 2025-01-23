@@ -14,7 +14,6 @@ export const verifyToken = (request, response, next) => {
     try {
         const decoded = jsonwebtoken.verify(token, JWT_KEY);
         request.userId = decoded.user.id;
-        // request.token = token;
         next();
     } catch (err) {
         console.error('JWT verification error:', err);

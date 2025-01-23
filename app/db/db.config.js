@@ -5,21 +5,14 @@ const dbPath = path.resolve("./app/testdb.sqlite");
 const sqlite3Verbose = sqlite3.verbose();
 
 export const db = new sqlite3Verbose.Database(dbPath, sqlite3Verbose.OPEN_READWRITE, (err) => {
-    if (err) {
-        console.error("Error connecting to db", err.message);
-    } else {
-        console.log("Connected to db for table creations.");
-    }
+    if (err) console.error("Error connecting to db", err.message);
+
 });
 
 // Create the tables
-export const createTables = () => {
-    db.run('PRAGMA foreign_keys = ON', (err) => {
-        if (err) {
-            console.error("Failed to enable foreign keys:", err.message);
-        } else {
-            console.log("Foreign key support enabled.");
-        }
+export const createTables = async () => {
+    await db.run('PRAGMA foreign_keys = ON', (err) => {
+        if (err) console.error("Failed to enable foreign keys:", err.message);
     });
 
     const usersTable = `
@@ -78,18 +71,16 @@ export const createTables = () => {
     // )
     // `;
 
-    db.run(usersTable, (err) => {
+    await db.run(usersTable, (err) => {
         if (err) console.error("Error creating users table:", err.message);
-        else console.log("Created users table.");
     });
-    db.run(projectsTable, (err) => {
+    await db.run(projectsTable, (err) => {
         if (err) console.error("Error creating projects table:", err.message);
-        else console.log("Created projects table.");
     });
-    db.run(tasksTable, (err) => {
+    await db.run(tasksTable, (err) => {
         if (err) console.error("Error creating tasks table:", err.message);
-        else console.log("Created tasks table.");
     });
+    console.log('tables created.')
     // db.run(commentsTable, (err) => {
     //     if (err) console.error("Error creating comments table:", err.message);
     //     else console.log("Created comments table.");

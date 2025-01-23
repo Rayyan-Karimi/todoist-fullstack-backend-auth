@@ -40,7 +40,6 @@ export const createProject = async (request, response) => {
 
 export const read = async (request, response) => {
     try {
-        console.log("controller - read projects")
         const projectId = request.params.id;
         const userId = request.userId;
         const responseData = await Project.findAll(projectId, userId);

@@ -5,6 +5,22 @@ import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 import User from '../models/user.model.js';
 import { postUserSchema, putUserSchema } from '../validation/users.js';
 
+const cookieOptions = { httpOnly: true, secure: false, SameSite: 'strict', expires: new Date(Number(new Date()) + 30 * 60 * 1000) };
+
+export const validateUser = async (request, response, next) => {
+    const token = request.cookies.token;
+    if (!token) {
+        return response.status(401).json({ message: 'Unauthorized' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY || 'your-secret-key');
+        response.json(decoded.user);
+    } catch (err) {
+        response.status(401).json({ message: 'TOKEN EXPIRED/LOGIN INPUTS WERE INVALID' });
+    }
+}
+
 export const createNewUser = async (req, res, next) => {
     try {
         const validatedUser = await postUserSchema.validate(req.body, { abortEarly: true });
@@ -25,7 +41,7 @@ export const createNewUser = async (req, res, next) => {
         const newUserInDB = await User.create(newUser)
         console.log('newUser after model call', newUserInDB)
         const jsonToken = jsonwebtoken.sign({ user: newUserInDB }, process.env.SECRET_KEY || 'your-secret-key', { expiresIn: '30m' });
-        res.cookie('token', jsonToken, { httpOnly: true, secure: true, SameSite: 'strict', expires: new Date(Number(new Date()) + 30 * 60 * 1000) }); //we add secure: true, when using https.
+        res.cookie('token', jsonToken, cookieOptions); //we add secure: true, when using https.
         res.status(201).send({ token: jsonToken, user: newUserInDB });
         //return res.redirect('/mainpage');
     } catch (err) {
@@ -34,8 +50,11 @@ export const createNewUser = async (req, res, next) => {
     }
 }
 
-
 export const login = async (request, response) => {
+    /**
+     * add in cookie:-
+     * Path=/; HttpOnly;
+     */
     try {
         const validatedUser = await putUserSchema.validate(request.body, { abortEarly: true });
         console.log("Validated:", validatedUser)
@@ -50,7 +69,8 @@ export const login = async (request, response) => {
         if (isValidPassword) {
             existingUserData.password = undefined;
             const jsonToken = jsonwebtoken.sign({ user: existingUserData }, process.env.JWT_KEY || 'your-secret-key', { expiresIn: '30min' })
-            response.cookie('token', jsonToken, { httpOnly: true, secure: true, SameSite: 'strict', expires: new Date(Number(new Date()) + 30 * 60 * 1000) })
+            response.cookie('token', jsonToken, cookieOptions)
+            console.log('cookie:', { token: jsonToken, user: existingUserData })
             response.status(201).send({ token: jsonToken, user: existingUserData });
         } else {
             return response.status(401).send({ error: 'Invalid password or email' });
@@ -62,40 +82,11 @@ export const login = async (request, response) => {
 };
 
 export const logout = async (request, response) => {
-    try {
-        console.log('1. adding user in user controller', request.body)
-        const validatedUser = await postUserSchema.validate(request.body, { abortEarly: false });
-        console.log('2. validated', validatedUser)
-        const user = new User(
-            validatedUser.name,
-            validatedUser.email,
-            validatedUser.password
-        )
-        console.log('3. constructor called', user)
-        const responseData = await User.create(user);
-        console.log('4. user created in model', responseData)
-        response.status(201).send(responseData)
-    } catch (err) {
-        if (err.name === "ValidationError") {
-            const errors = err.inner.map((e) => ({
-                field: e.path,
-                message: e.message,
-            }));
-            response.status(400).send({ errors });
-        } else {
-            console.error("Error:", err)
-            response.status(500).json({
-                message: "Error creating user",
-                error: {
-                    name: err.name,
-                    code: err.code,
-                    details: err.message
-                }
-            });
-        }
-    }
+    response.clearCookie('token');
+    response.status(200).send({ message: 'Logged out successfully' });
 };
 
+// @TODO: implement update & delete user in frontend.
 export const read = async (request, response) => {
     try {
         const userId = request.params.id;

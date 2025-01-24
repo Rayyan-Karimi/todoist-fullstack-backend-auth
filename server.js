@@ -14,7 +14,7 @@ import AddDataRoutes from './app/routes/dataGeneration.routes.js'
 // setup server
 const server = express()
 var corsRequestOptions = {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_PORT,
     credentials: true
 }
 server.use(cors(corsRequestOptions))
@@ -35,7 +35,7 @@ TaskRoutes(server)
 CommentRoutes(server)
 UsersRoutes(server)
 // start server
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT
 server.listen(PORT, () => {
     console.log("Server started on", PORT)
 })

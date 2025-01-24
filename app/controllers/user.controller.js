@@ -1,22 +1,26 @@
-import express from 'express'
 import jsonwebtoken from 'jsonwebtoken'
-import cookieParser from 'cookie-parser';
 import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 import User from '../models/user.model.js';
 import { postUserSchema, putUserSchema } from '../validation/users.js';
 
-const cookieOptions = { httpOnly: true, secure: false, SameSite: 'none',path:'/', expires: new Date(Number(new Date()) + 60 * 60 * 1000) };
+const cookieOptions = { httpOnly: true, secure: false, SameSite: 'none', path: '/', expires: new Date(Number(new Date()) + 60 * 60 * 1000) };
 
 export const validateUser = async (request, response, next) => {
     const token = request.cookies.token;
+    console.log("token in cookie found?", token)
+    // const decodedWithoutVerification = jsonwebtoken.decode(token);
+    // console.log('Decoded without verification:', decodedWithoutVerification);
+
     if (!token) {
-        return response.status(401).json({ message: 'Unauthorized' });
+        return response.status(401).json({ message: 'Unauthorized - Token Missing.' });
     }
     try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY || 'your-secret-key');
-        response.json(decoded.user);
+        console.log("what")
+        const decoded = jsonwebtoken.verify(token, process.env.JWT_KEY || 'your-secret-key');
+        console.log('decoded:', decoded)
+        response.status(200).send({ token: token, user: decoded.user });
     } catch (err) {
-        response.status(401).json({ message: 'TOKEN EXPIRED/LOGIN INPUTS WERE INVALID' });
+        response.status(401).json({ message: 'TOKEN EXPIRED/ LOGIN INPUTS WERE INVALID' });
     }
 }
 
@@ -34,11 +38,11 @@ export const createNewUser = async (req, res, next) => {
         }
         console.log('.')
         const newUserInDB = await User.create(newUser)
-        const jsonToken = jsonwebtoken.sign({ user: newUserInDB }, process.env.SECRET_KEY || 'your-secret-key', { expiresIn: '30m' });
-        // res.cookie('token', jsonToken, cookieOptions); //we add secure: true, when using https.
+        const jsonToken = jsonwebtoken.sign({ user: newUserInDB }, process.env.JWT_KEY || 'your-secret-key', { expiresIn: '30m' });
+        res.cookie('token', jsonToken, cookieOptions); //we add secure: true, when using https.
         res.status(201).send({ token: jsonToken, user: newUserInDB });
     } catch (err) {
-        console.log('error during CREATE NEW USER',err);
+        console.log('error during CREATE NEW USER', err);
         res.status(400).send(err);
     }
 }
@@ -56,7 +60,7 @@ export const login = async (request, response) => {
             existingUserData.password = undefined;
             const jsonToken = jsonwebtoken.sign({ user: existingUserData }, process.env.JWT_KEY || 'your-secret-key', { expiresIn: '30min' })
             response.cookie('token', jsonToken, cookieOptions); //we add secure: true, when using https.
-            response.status(201).send({ token: jsonToken, user: existingUserData });
+            response.status(200).send({ token: jsonToken, user: existingUserData });
         } else {
             return response.status(401).send({ error: 'Invalid password or email' });
         }

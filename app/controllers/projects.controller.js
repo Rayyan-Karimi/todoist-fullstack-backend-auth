@@ -40,7 +40,7 @@ export const read = async (request, response) => {
         const userId = request.userId;
         const responseData = await Project.findAll(projectId, userId);
         if (!responseData || responseData.length === 0) {
-            response.status(404).send({ message: projectId ? `No projects found with the given ID ${projectId}` : "No projects found.", });
+            response.status(204).send({ message: projectId ? `No projects found with the given ID ${projectId}` : "No projects found.", });
         } else {
             response.status(200).send(responseData);
         }
